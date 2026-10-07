@@ -8,16 +8,16 @@
 :root{
   --bg:#eef2f5;--card:#fff;--ink:#14212b;--muted:#5d6d7a;--line:#d5dde3;
   --ok:#0b7f62;--okbg:#d9f2ea;--bad:#c62828;--badbg:#fde4e2;--warn:#8a5a00;--warnbg:#fff0cc;
-  --accent:#1f5fbf;--accent-ink:#fff;
+  --accent:#1f5fbf;--accent-ink:#fff;--attn:#ecc27c;--attn-ink:#4a2d00;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f1820;--card:#18242e;--ink:#e8eef3;--muted:#93a3b0;--line:#2a3a47;
   --ok:#4fd1a8;--okbg:#12362d;--bad:#ff8a80;--badbg:#3d1d1b;--warn:#f5c15a;--warnbg:#3a2d0d;
-  --accent:#6aa5ff;--accent-ink:#0b1620}}
+  --accent:#6aa5ff;--accent-ink:#0b1620;--attn:#a85a1f;--attn-ink:#fff3dc}}
 :root[data-theme="dark"]{
   --bg:#0f1820;--card:#18242e;--ink:#e8eef3;--muted:#93a3b0;--line:#2a3a47;
   --ok:#4fd1a8;--okbg:#12362d;--bad:#ff8a80;--badbg:#3d1d1b;--warn:#f5c15a;--warnbg:#3a2d0d;
-  --accent:#6aa5ff;--accent-ink:#0b1620}
+  --accent:#6aa5ff;--accent-ink:#0b1620;--attn:#a85a1f;--attn-ink:#fff3dc}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{max-width:560px;margin:0 auto;padding:16px 16px 100px}
@@ -34,7 +34,7 @@ h1{font-size:1.15rem;margin:0}h2{font-size:1rem;margin:0 0 10px}
 @keyframes beat{0%{transform:scale(1)}18%{transform:scale(1.4)}36%{transform:scale(1.05)}54%{transform:scale(1.25)}100%{transform:scale(1)}}
 
 /* status tiles */
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:28px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .tile{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:92px;gap:1px;padding:10px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10)}
 .tile .ic{width:1.5rem;height:1.5rem}
 .tile b{font-size:.76rem;font-weight:600;opacity:.8}.tile span{font-size:.92rem;font-weight:700}
@@ -71,7 +71,7 @@ details{color:var(--muted);margin-top:18px}summary{cursor:pointer;padding:6px 0}
 details button{font-size:.9rem;min-height:40px}
 
 .banner{display:flex;gap:18px;align-items:center;border-radius:18px;padding:46px 22px;margin-bottom:16px;background:var(--okbg);color:var(--ok);box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10);transition:background .25s,color .25s}
-.banner.alarm{background:var(--badbg);color:var(--bad)}.banner.warn{background:var(--warnbg);color:var(--warn)}
+.banner.alarm{background:var(--badbg);color:var(--bad)}.banner.warn{background:var(--warnbg);color:var(--warn)}.banner.solid{background:var(--attn);color:var(--attn-ink)}
 .banner .ic{width:3.6rem;height:3.6rem;stroke-width:1.5}
 .banner strong{display:block;font-size:2.1rem;line-height:1.1;letter-spacing:-.02em}.banner span{display:block;margin-top:4px;font-size:1rem}
 .hdr-r{display:flex;align-items:center;gap:10px;position:relative}
@@ -84,6 +84,9 @@ details.card summary{display:flex;align-items:center;gap:8px;font-weight:700;pad
 ul.log{list-style:none;margin:0;padding:0 0 8px;max-height:240px;overflow:auto}
 ul.log li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
 ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.tile.solid{background:var(--attn);color:var(--attn-ink);border-color:transparent}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
 .tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600}
 .tabs a[aria-current="page"]{color:var(--accent)}
@@ -112,6 +115,8 @@ ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
   <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-shieldcheck" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3M7 10l5 5 5-5M5 21h14"/></symbol>
 </svg>
 
 <main>
@@ -166,6 +171,13 @@ ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
       <p class="sub" id="formMsg" style="margin:10px 0 0" aria-live="polite"></p>
     </section>
 
+    <section class="card" aria-labelledby="hFw">
+      <h2 id="hFw">Gateway firmware</h2>
+      <p class="sub" style="margin:0 0 12px">Installed version: <b id="fwVer">unknown</b></p>
+      <button class="primary" id="fwBtn"><svg class="ic"><use href="#i-download"/></svg>Update firmware</button>
+      <div class="bar" id="fwBar" hidden><i id="fwFill"></i></div>
+      <p class="sub" id="fwMsg" style="margin:10px 0 0" aria-live="polite"></p>
+    </section>
   </div>
 </main>
 
@@ -179,13 +191,13 @@ ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
 var $ = function(i){ return document.getElementById(i); };
 var DEF = {host:"", port:8884, user:"", pass:"", demo:false, theme:"system"};
 var PREFIX = "zeus", LOCK_MS = 5000;
-var TOPICS = ["system_status","arm","alarm","power","ping","availability","relay_state","reset_reason"];
+var TOPICS = ["system_status","arm","alarm","power","ping","availability","relay_state","reset_reason","version","update_status"];
 
 function loadCfg(){ var c = {}; try { c = JSON.parse(localStorage.getItem("zeusWeb2") || "{}"); } catch(e){} return Object.assign({}, DEF, c); }
 function saveCfg(){ try { localStorage.setItem("zeusWeb2", JSON.stringify(C)); return true; } catch(e){ return false; } }
 var C = loadCfg();
 
-var S = {conn:"off", err:"", arm:null, alarm:null, power:null, relay:null, online:false, lastSeen:0};
+var S = {ver:"", upd:"", conn:"off", err:"", arm:null, alarm:null, power:null, relay:null, online:false, lastSeen:0};
 var lock = {until:0, action:""};
 var client = null, timers = [];
 var sim = {arm:false, alarm:false, power:true, relay:false, up:true};
@@ -197,7 +209,9 @@ function ic(n){ return '<svg class="ic"><use href="#i-' + n + '"/></svg>'; }
 function toast(m){ var t = $("toast"); t.textContent = m; t.className = "show"; clearTimeout(toast.h); toast.h = setTimeout(function(){ t.className = ""; }, 2800); }
 function applyTheme(){
   var d = document.documentElement; if(C.theme === "light" || C.theme === "dark") d.setAttribute("data-theme", C.theme); else d.removeAttribute("data-theme");
-  $("themeBtn").innerHTML = ic({light:"sun", dark:"moon", system:"monitor"}[C.theme] || "monitor");
+  var m = /\d+/g, rgb = (getComputedStyle(document.body).backgroundColor.match(m) || [255,255,255]).map(Number);
+  var dark = (rgb[0]*299 + rgb[1]*587 + rgb[2]*114) / 1000 < 128;   // read what is really on screen
+  $("themeBtn").innerHTML = ic(dark ? "moon" : "sun");   // icon shows the theme actually displayed
   document.querySelectorAll("#menu button").forEach(function(b){ b.setAttribute("aria-checked", b.dataset.t === C.theme); });
 }
 
@@ -228,6 +242,8 @@ function handle(topic, msg){
   } else if(k === "availability"){ S.online = (msg === "online"); if(S.online) S.lastSeen = Date.now(); else addEvent("Gateway went offline");
   } else if(k === "ping"){ S.online = true; S.lastSeen = Date.now(); beat();
   } else if(k === "relay_state"){ S.relay = (msg === "on");
+  } else if(k === "version"){ S.ver = msg;
+  } else if(k === "update_status"){ S.upd = msg; if(msg.indexOf("progress") !== 0) addEvent("Firmware: " + msg);
   } else if(k === "reset_reason"){ addEvent(msg); }
   render();
 }
@@ -240,6 +256,7 @@ function publish(k, m){
       setTimeout(function(){ sim.arm = !sim.arm; handle(pre("arm"), sim.arm ? "ZEUS panel - ARM event" : "ZEUS panel - DISARM event"); }, 2500);
       setTimeout(function(){ sim.relay = false; handle(pre("relay_state"), "off"); }, 5300);
     }
+    if(k === "update" && m === "install" && sim.up) simUpdate();
   } else if(client){ client.publish(pre(k), m, {qos:1}); }
 }
 $("act").onclick = function(){
@@ -264,10 +281,10 @@ function loadLib(cb){
 }
 function simStatus(){
   handle(pre("system_status"), sim.arm ? "arm" : "disarm"); handle(pre("system_status"), sim.alarm ? "alarm" : "restore");
-  handle(pre("system_status"), sim.power ? "power_on" : "power_off"); handle(pre("relay_state"), sim.relay ? "on" : "off");
+  handle(pre("system_status"), sim.power ? "power_on" : "power_off"); handle(pre("relay_state"), sim.relay ? "on" : "off"); handle(pre("version"), "1.3.0");
 }
 function connect(){
-  disconnect(); S.arm = S.alarm = S.power = S.relay = null; S.online = false; S.lastSeen = 0; S.err = ""; lock.until = 0;
+  disconnect(); S.upd = ""; S.arm = S.alarm = S.power = S.relay = null; S.online = false; S.lastSeen = 0; S.err = ""; lock.until = 0;
   if(C.demo){
     S.conn = "connecting"; render();
     timers.push(setTimeout(function(){ S.conn = "on"; handle(pre("availability"), "online"); handle(pre("ping"), "on"); simStatus(); }, 700));
@@ -300,12 +317,13 @@ function render(){
   else if(S.arm === null || S.alarm === null || S.power === null) banner("warn", "clock", "Waiting for status", "Asked the gateway for its current state.");
   else if(S.alarm) banner("alarm", "bell", "Alarm triggered", "The panel reports an alarm. Check the site.");
   else if(!S.power) banner("warn", "zapoff", "Mains power lost", "The panel is running on its backup battery.");
-  else banner("", S.arm ? "shield" : "shieldoff", "All clear", (S.arm ? "Panel armed" : "Panel disarmed") + ", mains power on.");
+  else if(S.arm) banner("solid", "shieldcheck", "Armed", "Panel armed, mains power on.");
+  else banner("", "shieldoff", "All clear", "Panel disarmed, mains power on.");
 
   $("tiles").innerHTML =
     (S.power === null ? tile("zap", "none", "Power", "Waiting") : S.power ? tile("zap", "ok", "Power", "On") : tile("zapoff", "bad", "Power", "Lost")) +
     (S.alarm === null ? tile("bell", "none", "Alarm", "Waiting") : S.alarm ? tile("bell", "bad", "Alarm", "Triggered") : tile("bell", "ok", "Alarm", "Normal")) +
-    (S.arm === null ? tile("shield", "none", "Arm", "Waiting") : S.arm ? tile("shield", "ok", "Arm", "Armed") : tile("shieldoff", "warn", "Arm", "Disarmed"));
+    (S.arm === null ? tile("shield", "none", "Arm", "Waiting") : S.arm ? tile("shieldcheck", "solid", "Arm", "Armed") : tile("shieldoff", "ok", "Arm", "Disarmed"));
 
   var left = lock.until - Date.now(), locked = left > 0, b = $("act");
   b.disabled = locked || !on || !alive || S.arm === null;
@@ -317,6 +335,7 @@ function render(){
     : !on || !alive || S.arm === null ? "Unavailable until the gateway reports in."
     : S.arm ? "Panel is armed. Press to send a 5 s pulse and disarm." : "Panel is disarmed. Press to send a 5 s pulse and arm.";
   $("sim").style.display = C.demo ? "" : "none";
+  renderFw();
 }
 
 // ---- pages and settings ----
@@ -347,12 +366,32 @@ $("save").onclick = function(){
   connect(); location.hash = "#/";
 };
 
+// ---- firmware update (the gateway downloads it from your GitHub release) ----
+function simUpdate(){
+  var steps = ["starting", "progress 20", "progress 45", "progress 70", "progress 100", "success, rebooting"], i = 0;
+  var iv = setInterval(function(){ handle(pre("update_status"), steps[i++]); if(i >= steps.length){ clearInterval(iv); handle(pre("version"), "1.3.1"); } }, 1200);
+}
+$("fwBtn").onclick = function(){
+  if(!(S.conn === "on" && up())) return;
+  if(!confirm("Install the latest firmware now? The gateway stops monitoring for about a minute and then restarts.")) return;
+  S.upd = "starting"; publish("update", "install"); render();
+};
+function renderFw(){
+  var m = /^progress (\d+)/.exec(S.upd), busy = S.upd === "starting" || !!m;
+  $("fwVer").textContent = S.ver || "unknown";
+  $("fwBtn").disabled = !(S.conn === "on" && up()) || busy;
+  $("fwBar").hidden = !m; $("fwFill").style.width = (m ? m[1] : 0) + "%";
+  $("fwMsg").textContent = S.upd ? "Update: " + S.upd : "The gateway downloads updates from your GitHub release.";
+}
+
 // ---- preview simulator ----
 $("dAlarm").onclick = function(){ sim.alarm = !sim.alarm; handle(pre("alarm"), sim.alarm ? "ZEUS panel - ALARM event" : "ZEUS panel - RESTORE ALARM event"); };
 $("dPower").onclick = function(){ sim.power = !sim.power; handle(pre("power"), sim.power ? "ZEUS panel - POWER ON event" : "ZEUS panel - POWER OFF event"); };
 $("dDev").onclick = function(){ sim.up = !sim.up; handle(pre("availability"), sim.up ? "online" : "offline"); };
 
+try{ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); }catch(e){}
 applyTheme(); fillForm(); renderLog(); route(); render(); connect();
+setTimeout(applyTheme, 0); window.addEventListener("load", applyTheme);
 setInterval(render, 250);
 </script>
 </body>
