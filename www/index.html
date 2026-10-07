@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zeus Gateway</title>
+<style>
+:root{
+  --bg:#eef2f5;--card:#fff;--ink:#14212b;--muted:#5d6d7a;--line:#d5dde3;
+  --ok:#0b7f62;--okbg:#d9f2ea;--bad:#c62828;--badbg:#fde4e2;--warn:#8a5a00;--warnbg:#fff0cc;
+  --accent:#1f5fbf;--accent-ink:#fff;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1820;--card:#18242e;--ink:#e8eef3;--muted:#93a3b0;--line:#2a3a47;
+  --ok:#4fd1a8;--okbg:#12362d;--bad:#ff8a80;--badbg:#3d1d1b;--warn:#f5c15a;--warnbg:#3a2d0d;
+  --accent:#6aa5ff;--accent-ink:#0b1620}}
+:root[data-theme="dark"]{
+  --bg:#0f1820;--card:#18242e;--ink:#e8eef3;--muted:#93a3b0;--line:#2a3a47;
+  --ok:#4fd1a8;--okbg:#12362d;--bad:#ff8a80;--badbg:#3d1d1b;--warn:#f5c15a;--warnbg:#3a2d0d;
+  --accent:#6aa5ff;--accent-ink:#0b1620}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:560px;margin:0 auto;padding:16px 16px 100px}
+.ic{width:1.3em;height:1.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 16px}
+h1{font-size:1.15rem;margin:0}h2{font-size:1rem;margin:0 0 10px}
+.sub{color:var(--muted);font-size:.88rem}
+
+/* heartbeat */
+.hb{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;color:var(--muted)}
+.hb .heart{width:1.1rem;height:1.1rem}
+.hb.ok{color:var(--ok)}.hb.ok .heart{fill:currentColor}
+.heart.beat{animation:beat .6s ease-out}
+@keyframes beat{0%{transform:scale(1)}18%{transform:scale(1.4)}36%{transform:scale(1.05)}54%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+/* status tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:28px}
+.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:92px;gap:1px;padding:10px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10)}
+.tile .ic{width:1.5rem;height:1.5rem}
+.tile b{font-size:.76rem;font-weight:600;opacity:.8}.tile span{font-size:.92rem;font-weight:700}
+.tile.ok{background:var(--okbg);color:var(--ok);border-color:transparent}
+.tile.bad{background:var(--badbg);color:var(--bad);border-color:transparent}
+.tile.warn{background:var(--warnbg);color:var(--warn);border-color:transparent}
+.tile.none{color:var(--muted)}
+
+/* the big button */
+.act{position:relative;overflow:hidden;width:100%;min-height:92px;border-radius:16px;border:0;background:#1a6cf0;color:#fff;font:inherit;font-size:1.2rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.act .ic{width:1.6rem;height:1.6rem}
+.act .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.3)}
+.act .in{position:relative;display:flex;align-items:center;gap:10px}
+.act:disabled{opacity:.5;cursor:not-allowed}
+.act.locked:disabled{opacity:1;cursor:wait}
+.hint{text-align:center;margin:10px 0 0;color:var(--muted)}
+.note{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:.9rem;margin:0 0 14px}
+
+button,input,a{font:inherit}
+button{cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible,.seg input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+
+section.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10)}
+label{display:block;font-weight:600;margin:14px 0 4px}
+.hintl{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
+input[type=text],input[type=password],input[type=number]{width:100%;padding:10px 12px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 110px;gap:10px}
+.pw{display:flex;gap:8px}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:600;margin-top:18px}
+.check input{width:22px;height:22px;margin:2px 0 0}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+details{color:var(--muted);margin-top:18px}summary{cursor:pointer;padding:6px 0}
+details button{font-size:.9rem;min-height:40px}
+
+.banner{display:flex;gap:18px;align-items:center;border-radius:18px;padding:46px 22px;margin-bottom:16px;background:var(--okbg);color:var(--ok);box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10);transition:background .25s,color .25s}
+.banner.alarm{background:var(--badbg);color:var(--bad)}.banner.warn{background:var(--warnbg);color:var(--warn)}
+.banner .ic{width:3.6rem;height:3.6rem;stroke-width:1.5}
+.banner strong{display:block;font-size:2.1rem;line-height:1.1;letter-spacing:-.02em}.banner span{display:block;margin-top:4px;font-size:1rem}
+.hdr-r{display:flex;align-items:center;gap:10px;position:relative}
+.iconbtn{width:40px;height:40px;min-height:40px;padding:0;border-radius:50%}
+.menu{position:absolute;right:0;top:48px;z-index:10;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.menu button{width:100%;justify-content:flex-start;border:0;background:none;min-height:40px}
+.menu button[aria-checked="true"]{color:var(--accent);font-weight:700}
+details.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:2px 16px;margin-top:14px;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10)}
+details.card summary{display:flex;align-items:center;gap:8px;font-weight:700;padding:12px 0}
+ul.log{list-style:none;margin:0;padding:0 0 8px;max-height:240px;overflow:auto}
+ul.log li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600}
+.tabs a[aria-current="page"]{color:var(--accent)}
+.view{display:none}.view.on{display:block}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;max-width:90vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+  <symbol id="i-shieldoff" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M2 2l20 20"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-zapoff" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/><path d="M2 2l20 20"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+</svg>
+
+<main>
+  <header>
+    <h1>Zeus Gateway</h1>
+    <div class="hdr-r">
+      <span class="hb" id="hb"><svg class="ic heart" id="heart"><use href="#i-heart"/></svg><span id="hbTxt"></span></span>
+      <button class="iconbtn" id="themeBtn" aria-label="Appearance" aria-haspopup="menu" aria-expanded="false"></button>
+      <div class="menu" id="menu" role="menu" hidden>
+        <button role="menuitemradio" data-t="light"><svg class="ic"><use href="#i-sun"/></svg>Light</button>
+        <button role="menuitemradio" data-t="dark"><svg class="ic"><use href="#i-moon"/></svg>Dark</button>
+        <button role="menuitemradio" data-t="system"><svg class="ic"><use href="#i-monitor"/></svg>System</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page 1 -->
+  <div class="view on" id="v-home">
+    <div class="banner" id="banner" role="status" aria-live="polite"></div>
+    <div class="tiles" id="tiles"></div>
+
+    <button class="act" id="act" aria-describedby="hint">
+      <span class="fill" id="fill"></span>
+      <span class="in"><span id="actIc"></span><span id="actLbl">Arm</span></span>
+    </button>
+    <p class="hint" id="hint" aria-live="polite"></p>
+
+    <details class="card" id="events"><summary><svg class="ic"><use href="#i-clock"/></svg>Recent events</summary><ul class="log" id="log"></ul></details>
+
+    <details id="sim"><summary>Preview simulator (not part of the real app)</summary>
+      <div class="actions">
+        <button id="dAlarm">Alarm on/off</button><button id="dPower">Mains lost/back</button><button id="dDev">Gateway offline/online</button>
+      </div>
+    </details>
+  </div>
+
+  <!-- Page 2 -->
+  <div class="view" id="v-settings">
+    <section class="card" aria-labelledby="hBroker">
+      <h2 id="hBroker">MQTT credentials</h2>
+      <div class="two">
+        <div><label for="host" style="margin-top:0">Broker address</label><input type="text" id="host" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="abc123.s1.eu.hivemq.cloud"></div>
+        <div><label for="port" style="margin-top:0">Port</label><input type="number" id="port" inputmode="numeric"></div>
+      </div>
+      <span class="hintl">Browsers use secure WebSockets: HiveMQ Cloud port 8884.</span>
+      <label for="user">Username</label>
+      <input type="text" id="user" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <label for="pass">Password</label>
+      <div class="pw"><input type="password" id="pass" autocomplete="new-password"><button type="button" id="showPw" aria-label="Show password"><svg class="ic"><use href="#i-eye"/></svg></button></div>
+      <label class="check"><input type="checkbox" id="demo"><span>Use simulated data<span class="hintl">Preview only, no broker needed.</span></span></label>
+      <div class="actions"><button class="primary" id="save"><svg class="ic"><use href="#i-cloud"/></svg>Save and connect</button></div>
+      <p class="sub" id="formMsg" style="margin:10px 0 0" aria-live="polite"></p>
+    </section>
+
+  </div>
+</main>
+
+<nav class="tabs" aria-label="Pages">
+  <a href="#/" id="tHome"><svg class="ic"><use href="#i-home"/></svg>Dashboard</a>
+  <a href="#/settings" id="tSet"><svg class="ic"><use href="#i-sliders"/></svg>Settings</a>
+</nav>
+<div id="toast"></div>
+
+<script>
+var $ = function(i){ return document.getElementById(i); };
+var DEF = {host:"", port:8884, user:"", pass:"", demo:false, theme:"system"};
+var PREFIX = "zeus", LOCK_MS = 5000;
+var TOPICS = ["system_status","arm","alarm","power","ping","availability","relay_state","reset_reason"];
+
+function loadCfg(){ var c = {}; try { c = JSON.parse(localStorage.getItem("zeusWeb2") || "{}"); } catch(e){} return Object.assign({}, DEF, c); }
+function saveCfg(){ try { localStorage.setItem("zeusWeb2", JSON.stringify(C)); return true; } catch(e){ return false; } }
+var C = loadCfg();
+
+var S = {conn:"off", err:"", arm:null, alarm:null, power:null, relay:null, online:false, lastSeen:0};
+var lock = {until:0, action:""};
+var client = null, timers = [];
+var sim = {arm:false, alarm:false, power:true, relay:false, up:true};
+
+function pre(k){ return PREFIX + "/" + k; }
+function up(){ return S.online && (Date.now() - S.lastSeen) < 5000; }
+function ago(ms){ var s = Math.round(ms/1000); return s < 60 ? s + " s ago" : Math.floor(s/60) + " min ago"; }
+function ic(n){ return '<svg class="ic"><use href="#i-' + n + '"/></svg>'; }
+function toast(m){ var t = $("toast"); t.textContent = m; t.className = "show"; clearTimeout(toast.h); toast.h = setTimeout(function(){ t.className = ""; }, 2800); }
+function applyTheme(){
+  var d = document.documentElement; if(C.theme === "light" || C.theme === "dark") d.setAttribute("data-theme", C.theme); else d.removeAttribute("data-theme");
+  $("themeBtn").innerHTML = ic({light:"sun", dark:"moon", system:"monitor"}[C.theme] || "monitor");
+  document.querySelectorAll("#menu button").forEach(function(b){ b.setAttribute("aria-checked", b.dataset.t === C.theme); });
+}
+
+var beatN = 0, BEAT_COLORS = ["#2ea043", "#e5484d"];
+function beat(){
+  var h = $("heart"); beatN = (beatN + 1) % BEAT_COLORS.length; h.style.color = BEAT_COLORS[beatN];   // new color on every beat
+  h.classList.remove("beat"); void h.getBoundingClientRect(); h.classList.add("beat");
+}
+var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+var events = [];
+function addEvent(m){ events.unshift({t:new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}), m:m}); events = events.slice(0, 30); renderLog(); }
+function renderLog(){
+  var li = ""; events.forEach(function(e){ li += "<li><time>" + e.t + "</time><span>" + esc(e.m) + "</span></li>"; });
+  $("log").innerHTML = li || "<li><span class='sub'>No events yet. Panel changes appear here.</span></li>";
+}
+function banner(cls, icon, t, s){ var b = $("banner"); b.className = "banner " + cls; b.innerHTML = ic(icon) + "<div><strong>" + t + "</strong><span>" + s + "</span></div>"; }
+
+// ---- messages from the gateway (same path for the broker and the simulator) ----
+function handle(topic, msg){
+  var k = topic.slice(PREFIX.length + 1);
+  if(k === "system_status"){
+    if(msg === "arm") S.arm = true; else if(msg === "disarm") S.arm = false;
+    else if(msg === "alarm") S.alarm = true; else if(msg === "restore") S.alarm = false;
+    else if(msg === "power_on") S.power = true; else if(msg === "power_off") S.power = false;
+  } else if(k === "arm"){ S.arm = msg.indexOf("DISARM") < 0; addEvent(msg);
+  } else if(k === "alarm"){ S.alarm = msg.indexOf("RESTORE") < 0; addEvent(msg);
+  } else if(k === "power"){ S.power = msg.indexOf("POWER OFF") < 0; addEvent(msg);
+  } else if(k === "availability"){ S.online = (msg === "online"); if(S.online) S.lastSeen = Date.now(); else addEvent("Gateway went offline");
+  } else if(k === "ping"){ S.online = true; S.lastSeen = Date.now(); beat();
+  } else if(k === "relay_state"){ S.relay = (msg === "on");
+  } else if(k === "reset_reason"){ addEvent(msg); }
+  render();
+}
+
+// ---- the only command: relay on = arm, relay off = disarm, then 5 s wait ----
+function publish(k, m){
+  if(C.demo){
+    if(k === "zone_remote" && m === "pulse" && sim.up){
+      setTimeout(function(){ sim.relay = true; handle(pre("relay_state"), "on"); }, 300);
+      setTimeout(function(){ sim.arm = !sim.arm; handle(pre("arm"), sim.arm ? "ZEUS panel - ARM event" : "ZEUS panel - DISARM event"); }, 2500);
+      setTimeout(function(){ sim.relay = false; handle(pre("relay_state"), "off"); }, 5300);
+    }
+  } else if(client){ client.publish(pre(k), m, {qos:1}); }
+}
+$("act").onclick = function(){
+  if(Date.now() < lock.until || S.arm === null || !up()) return;
+  var want = !S.arm, was = S.arm;   // Arm and Disarm send the same pulse
+  lock.until = Date.now() + LOCK_MS; lock.action = want ? "arm" : "disarm";
+  var f = $("fill"); f.style.transition = "none"; f.style.width = "0"; void f.offsetWidth;
+  f.style.transition = "width " + LOCK_MS + "ms linear"; f.style.width = "100%";
+  addEvent(want ? "Arm requested (5 s relay pulse)" : "Disarm requested (5 s relay pulse)");
+  publish("zone_remote", "pulse");
+  setTimeout(function(){ if(S.arm === was) toast("The panel did not change state"); }, LOCK_MS + 1500);
+  render();
+};
+
+// ---- connection ----
+function disconnect(){ timers.forEach(clearTimeout); timers.forEach(clearInterval); timers = []; if(client){ try{ client.end(true); }catch(e){} client = null; } }
+function loadLib(cb){
+  if(window.mqtt) return cb();
+  var s = document.createElement("script"); s.src = "mqtt.min.js";
+  s.onload = cb; s.onerror = function(){ S.conn = "off"; S.err = "Could not load the MQTT library."; render(); };
+  document.head.appendChild(s);
+}
+function simStatus(){
+  handle(pre("system_status"), sim.arm ? "arm" : "disarm"); handle(pre("system_status"), sim.alarm ? "alarm" : "restore");
+  handle(pre("system_status"), sim.power ? "power_on" : "power_off"); handle(pre("relay_state"), sim.relay ? "on" : "off");
+}
+function connect(){
+  disconnect(); S.arm = S.alarm = S.power = S.relay = null; S.online = false; S.lastSeen = 0; S.err = ""; lock.until = 0;
+  if(C.demo){
+    S.conn = "connecting"; render();
+    timers.push(setTimeout(function(){ S.conn = "on"; handle(pre("availability"), "online"); handle(pre("ping"), "on"); simStatus(); }, 700));
+    timers.push(setInterval(function(){ if(sim.up) handle(pre("ping"), "on"); }, 1000));
+    return;
+  }
+  if(!C.host){ S.conn = "off"; render(); return; }
+  S.conn = "connecting"; render();
+  loadLib(function(){
+    client = mqtt.connect("wss://" + C.host + ":" + C.port + "/mqtt", {username:C.user, password:C.pass,
+      clientId:"zeus-web-" + Math.random().toString(16).slice(2, 8), reconnectPeriod:5000, connectTimeout:10000});
+    client.on("connect", function(){ S.conn = "on"; S.err = ""; client.subscribe(TOPICS.map(pre)); client.publish(pre("request_status"), "status"); render(); });
+    client.on("close", function(){ S.conn = "connecting"; render(); });
+    client.on("error", function(e){ S.err = e.message || "Connection error"; render(); });
+    client.on("message", function(t, m){ handle(t, m.toString()); });
+  });
+}
+
+// ---- rendering ----
+function tile(icon, cls, label, val){ return '<div class="tile ' + cls + '">' + ic(icon) + '<b>' + label + '</b><span>' + val + '</span></div>'; }
+
+function render(){
+  var on = S.conn === "on", alive = up(), hb = $("hb");
+  hb.className = "hb" + (on && alive ? " ok" : "");
+  if(!(on && alive)) $("heart").style.color = "";   // grey when there is no heartbeat
+  $("hbTxt").textContent = !on ? (S.conn === "connecting" ? "Connecting" : "Not connected") : alive ? "Alive" : "No heartbeat";
+
+  if(!on) banner("warn", "cloud", S.conn === "connecting" ? "Connecting…" : "Not connected", esc(S.err || (!C.host && !C.demo ? "Enter your broker details in Settings." : "Reaching the broker.")));
+  else if(!alive) banner("warn", "heart", "Gateway offline", S.lastSeen ? "Last heartbeat " + ago(Date.now() - S.lastSeen) + "." : "Waiting for the gateway to report in.");
+  else if(S.arm === null || S.alarm === null || S.power === null) banner("warn", "clock", "Waiting for status", "Asked the gateway for its current state.");
+  else if(S.alarm) banner("alarm", "bell", "Alarm triggered", "The panel reports an alarm. Check the site.");
+  else if(!S.power) banner("warn", "zapoff", "Mains power lost", "The panel is running on its backup battery.");
+  else banner("", S.arm ? "shield" : "shieldoff", "All clear", (S.arm ? "Panel armed" : "Panel disarmed") + ", mains power on.");
+
+  $("tiles").innerHTML =
+    (S.power === null ? tile("zap", "none", "Power", "Waiting") : S.power ? tile("zap", "ok", "Power", "On") : tile("zapoff", "bad", "Power", "Lost")) +
+    (S.alarm === null ? tile("bell", "none", "Alarm", "Waiting") : S.alarm ? tile("bell", "bad", "Alarm", "Triggered") : tile("bell", "ok", "Alarm", "Normal")) +
+    (S.arm === null ? tile("shield", "none", "Arm", "Waiting") : S.arm ? tile("shield", "ok", "Arm", "Armed") : tile("shieldoff", "warn", "Arm", "Disarmed"));
+
+  var left = lock.until - Date.now(), locked = left > 0, b = $("act");
+  b.disabled = locked || !on || !alive || S.arm === null;
+  b.className = "act" + (locked ? " locked" : "");
+  if(!locked){ var f = $("fill"); f.style.transition = "none"; f.style.width = "0"; }
+  $("actIc").innerHTML = ic(locked ? "clock" : S.arm ? "unlock" : "lock");
+  $("actLbl").textContent = locked ? "Wait " + Math.ceil(left / 1000) + " s" : S.arm ? "Disarm" : "Arm";
+  $("hint").textContent = locked ? (lock.action === "arm" ? "Relay pulse sent. Waiting for the panel to arm." : "Relay pulse sent. Waiting for the panel to disarm.")
+    : !on || !alive || S.arm === null ? "Unavailable until the gateway reports in."
+    : S.arm ? "Panel is armed. Press to send a 5 s pulse and disarm." : "Panel is disarmed. Press to send a 5 s pulse and arm.";
+  $("sim").style.display = C.demo ? "" : "none";
+}
+
+// ---- pages and settings ----
+function route(){
+  var s = location.hash === "#/settings";
+  $("v-home").className = "view" + (s ? "" : " on"); $("v-settings").className = "view" + (s ? " on" : "");
+  $("tHome").setAttribute("aria-current", s ? "false" : "page"); $("tSet").setAttribute("aria-current", s ? "page" : "false");
+  window.scrollTo(0, 0);
+}
+window.onhashchange = route;
+
+function fillForm(){
+  $("host").value = C.host; $("port").value = C.port; $("user").value = C.user; $("pass").value = C.pass; $("demo").checked = C.demo;
+}
+function setMenu(o){ $("menu").hidden = !o; $("themeBtn").setAttribute("aria-expanded", o); }
+$("themeBtn").onclick = function(e){ e.stopPropagation(); setMenu($("menu").hidden); };
+document.addEventListener("click", function(){ setMenu(false); });
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") setMenu(false); });
+document.querySelectorAll("#menu button").forEach(function(b){ b.onclick = function(){ C.theme = b.dataset.t; applyTheme(); saveCfg(); setMenu(false); }; });
+$("showPw").onclick = function(){ var p = $("pass"), s = p.type === "password"; p.type = s ? "text" : "password"; this.innerHTML = ic(s ? "eyeoff" : "eye"); this.setAttribute("aria-label", s ? "Hide password" : "Show password"); };
+$("save").onclick = function(){
+  var h = $("host").value.trim(), p = parseInt($("port").value, 10), d = $("demo").checked, err = "";
+  if(!d && !h) err = "Enter the broker address, or turn on simulated data.";
+  else if(!d && !(p > 0 && p < 65536)) err = "Port must be between 1 and 65535.";
+  $("formMsg").textContent = err; if(err) return;
+  C.host = h; C.port = p || 8884; C.user = $("user").value.trim(); C.pass = $("pass").value; C.demo = d;
+  toast(saveCfg() ? "Saved. Connecting…" : "Connecting. This browser could not store the settings.");
+  connect(); location.hash = "#/";
+};
+
+// ---- preview simulator ----
+$("dAlarm").onclick = function(){ sim.alarm = !sim.alarm; handle(pre("alarm"), sim.alarm ? "ZEUS panel - ALARM event" : "ZEUS panel - RESTORE ALARM event"); };
+$("dPower").onclick = function(){ sim.power = !sim.power; handle(pre("power"), sim.power ? "ZEUS panel - POWER ON event" : "ZEUS panel - POWER OFF event"); };
+$("dDev").onclick = function(){ sim.up = !sim.up; handle(pre("availability"), sim.up ? "online" : "offline"); };
+
+applyTheme(); fillForm(); renderLog(); route(); render(); connect();
+setInterval(render, 250);
+</script>
+</body>
+</html>

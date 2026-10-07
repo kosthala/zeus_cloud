@@ -1,0 +1,6 @@
+{
+  "appId": "com.zeus.gateway",
+  "appName": "Zeus Gateway",
+  "webDir": "www",
+  "server": { "androidScheme": "https" }
+}
