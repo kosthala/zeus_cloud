@@ -27,13 +27,17 @@ static bool lanStarted = false;
 // variables; MQTT is published from OTA_Loop() on the main loop so PubSubClient is never
 // used from two tasks.
 static volatile bool    requested = false;
-static volatile bool    running   = false;
 static volatile bool    finished  = false;
 static volatile bool    success   = false;
 static volatile int     progress  = -1;
 static char             finalMsg[96] = "";
 static int              reported  = -1;
+static uint32_t         waitSince = 0;
 static uint32_t         rebootAt  = 0;
+static uint32_t         rebootDeadline = 0;
+
+enum OtaState { OTA_IDLE, OTA_WAIT_ALERTS, OTA_DOWNLOAD, OTA_REBOOT };
+static OtaState state = OTA_IDLE;
 
 
 static void status(const char *msg)
@@ -110,71 +114,91 @@ void OTA_Loop()
         ArduinoOTA.handle();
 #endif
 
-    // ---- reboot after a successful update (give MQTT a moment to deliver the last message) ----
-    if (rebootAt != 0)
+    switch (state)
     {
-        MQTT_Loop();
+    case OTA_IDLE:
+        if (!requested)
+            return;
 
-        if ((int32_t)(millis() - rebootAt) >= 0)
-            ESP.restart();
-
-        return;
-    }
-
-    // ---- start ----
-    if (requested && !running)
-    {
         requested = false;
 
         if (WiFi.status() != WL_CONNECTED)       { status("failed: no WiFi");               return; }
         if (alarmActive())                       { status("refused: alarm is active");      return; }
         if (!TIME_HELPER_IsSynced())             { status("failed: clock not synced yet");  return; }
-        if (ESP.getFreeHeap() < OTA_MIN_FREE_HEAP) { status("failed: not enough memory");   return; }
 
         status("starting");
-        NOTIFIER_Enqueue("ZEUS - firmware update started", "default");
+
+        // Two TLS sessions at once do not fit in RAM: stop alerts and let the one in progress finish.
+        NOTIFIER_Pause(true);
+        waitSince = millis();
+        state = OTA_WAIT_ALERTS;
+        return;
+
+    case OTA_WAIT_ALERTS:
+        requested = false;
+
+        if (!NOTIFIER_Idle() && (millis() - waitSince) < 90000UL)
+            return;
+
+        Serial.printf("[OTA] free heap %u, largest block %u\n", (unsigned)ESP.getFreeHeap(), (unsigned)ESP.getMaxAllocHeap());
+
+        if (ESP.getFreeHeap() < OTA_MIN_FREE_HEAP)
+        {
+            status("failed: not enough memory");
+            NOTIFIER_Pause(false);
+            state = OTA_IDLE;
+            return;
+        }
 
         progress = -1;
         reported = -1;
         finished = false;
-        running  = true;
-
         xTaskCreatePinnedToCore(otaTask, "ota", 16384, nullptr, 1, nullptr, 0);
-        return;
-    }
-
-    requested = false;   // a request that arrives while one is running is dropped
-
-    if (!running)
+        state = OTA_DOWNLOAD;
         return;
 
-    // ---- progress (every 10 %) ----
-    int p = progress;
-
-    if (p >= 0 && p / 10 != reported / 10 && p != reported)
+    case OTA_DOWNLOAD:
     {
-        char msg[24];
-        snprintf(msg, sizeof(msg), "progress %d", (p / 10) * 10);
-        status(msg);
-        reported = p;
-    }
+        requested = false;   // a request that arrives while one is running is dropped
 
-    // ---- finished ----
-    if (finished)
-    {
-        running = false;
+        int p = progress;
+
+        if (p >= 0 && p / 10 != reported / 10 && p != reported)
+        {
+            char msg[24];
+            snprintf(msg, sizeof(msg), "progress %d", (p / 10) * 10);
+            status(msg);
+            reported = p;
+        }
+
+        if (!finished)
+            return;
+
+        NOTIFIER_Pause(false);
 
         if (success)
         {
             status("progress 100");
             status(finalMsg);
             NOTIFIER_Enqueue("ZEUS - firmware updated, rebooting", "default");
-            rebootAt = millis() + 3000;
+            rebootAt = millis() + 2000;
+            rebootDeadline = millis() + 40000UL;   // let the alert go out first, but never wait forever
+            state = OTA_REBOOT;
         }
         else
         {
             status(finalMsg);
             NOTIFIER_Enqueue("ZEUS - firmware update FAILED", "high");
+            state = OTA_IDLE;
         }
+        return;
+    }
+
+    case OTA_REBOOT:
+        MQTT_Loop();
+
+        if ((int32_t)(millis() - rebootAt) >= 0 && (NOTIFIER_Idle() || (int32_t)(millis() - rebootDeadline) >= 0))
+            ESP.restart();
+        return;
     }
 }

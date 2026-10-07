@@ -17,6 +17,8 @@ typedef struct
 } NotifyEvent;
 
 static QueueHandle_t notifyQueue = nullptr;
+static volatile bool paused = false;   // set during a firmware download (memory is needed for its TLS session)
+static volatile bool busy   = false;   // an alert is being delivered right now
 
 
 static void notifierTask(void *)
@@ -25,8 +27,16 @@ static void notifierTask(void *)
 
     for (;;)
     {
-        if (xQueueReceive(notifyQueue, &ev, portMAX_DELAY) != pdTRUE)
+        while (paused)
+            vTaskDelay(pdMS_TO_TICKS(200));
+
+        if (xQueueReceive(notifyQueue, &ev, pdMS_TO_TICKS(500)) != pdTRUE)
             continue;
+
+        while (paused)   // an update started just as this event arrived: hold it
+            vTaskDelay(pdMS_TO_TICKS(200));
+
+        busy = true;
 
         // Hold the event until WiFi is back. New events keep queuing meanwhile.
         while (WiFi.status() != WL_CONNECTED)
@@ -53,7 +63,21 @@ static void notifierTask(void *)
             if (!ok)
                 vTaskDelay(pdMS_TO_TICKS(5000));
         }
+
+        busy = false;
     }
+}
+
+
+void NOTIFIER_Pause(bool p)
+{
+    paused = p;
+}
+
+
+bool NOTIFIER_Idle()
+{
+    return !busy && notifyQueue != nullptr && uxQueueMessagesWaiting(notifyQueue) == 0;
 }
 
 

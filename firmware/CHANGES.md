@@ -48,3 +48,7 @@
   `include/secrets.h` is optional and only seeds NVS on first boot.
 - Boot log prints flash size and the running partition.
 - Optional ArduinoOTA over the LAN (`OTA_ARDUINO_ENABLE`, off).
+
+- v1.3.0 (cert fix): added ISRG Root YR and ISRG Root YE to the OTA trust list; GitHub download hosts now use Let's Encrypt Gen Y certificates.
+
+- v1.3.0 (memory fix): the update waits for running alerts and pauses alerts while downloading (two TLS sessions did not fit in RAM); trust list trimmed to 9 roots.
