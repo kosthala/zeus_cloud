@@ -15,6 +15,7 @@
   --warn:#9A6200;--warnt:rgba(154,98,0,.12);--warnring:rgba(154,98,0,.34);--warnx:#7A5200;
   --accent:#2457F5;--accent-ink:#FFFFFF;--accent-t:rgba(36,87,245,.10);--glow:rgba(36,87,245,.28);--fillc:rgba(255,255,255,.30);
   --shadow:0 1px 2px rgba(14,22,32,.05);
+  --tabs:calc(84px + env(safe-area-inset-bottom,0px));
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0A0F15;--card:#131A22;--ink:#EAF0F5;--muted:#8A98A6;--line:#1F2A36;--field:#0E151C;--fline:#243140;
@@ -35,7 +36,7 @@
 *,*::before,*::after{box-sizing:inherit}
 html{background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:480px;margin:0 auto;padding:22px 20px 250px}
+main{max-width:480px;margin:0 auto;padding:18px 20px 0}
 .ic{width:1.3em;height:1.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-weight:500}
 header{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -56,26 +57,26 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
 .menu button{width:100%;display:flex;align-items:center;gap:10px;justify-content:flex-start;border:0;background:none;min-height:44px;padding:0 12px;border-radius:10px}
 .menu button[aria-checked="true"]{color:var(--accent);font-weight:800}
 
-.wifi{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)}
+.wifi{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)}
 .wifi .sig{width:16px;height:14px;flex:none}
 .wifi .sig rect{fill:currentColor;opacity:.28}.wifi .sig rect.on{opacity:.95}
 .wifi .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%}
 
 /* hero */
-.hero{--c:var(--ok);--ct:var(--ok);--tint:var(--okt);--rg:var(--okring);--tx:var(--okx);display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:20px}
+.hero{flex:1;min-height:0;justify-content:center;margin-top:0!important;--c:var(--ok);--ct:var(--ok);--tint:var(--okt);--rg:var(--okring);--tx:var(--okx);display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:20px}
 .hero.attn{--c:var(--attn);--tint:var(--attnt);--rg:var(--attnring);--tx:var(--attnx)}
 .hero.bad{--c:var(--bad);--tint:var(--badt);--rg:var(--badring);--tx:var(--badx)}
 .hero.warn{--c:var(--warn);--tint:var(--warnt);--rg:var(--warnring);--tx:var(--warnx)}
-.ring{width:min(236px,64vw);aspect-ratio:1;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--c) 30%,transparent);display:flex;align-items:center;justify-content:center}
+.ring{width:min(236px,64vw,27dvh);aspect-ratio:1;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--c) 30%,transparent);display:flex;align-items:center;justify-content:center}
 .disc{width:80%;aspect-ratio:1;border-radius:50%;background:var(--tint);border:1.5px solid var(--rg);display:flex;align-items:center;justify-content:center;color:var(--c)}
 .hero.bad .ring{box-shadow:0 0 0 14px color-mix(in srgb,var(--c) 8%,transparent)}
 .hero.bad .disc,.hero.attn .disc{box-shadow:0 0 60px color-mix(in srgb,var(--c) 24%,transparent)}
 .disc .ic{width:44%;height:44%;stroke-width:1.5}
-.hero h2{margin:22px 0 0;font-weight:800;font-size:clamp(28px,9vw,36px);letter-spacing:-.03em;line-height:1.05;color:var(--tx)}
+.hero h2{margin:clamp(12px,3dvh,22px) 0 0;font-weight:800;font-size:clamp(28px,9vw,36px);letter-spacing:-.03em;line-height:1.05;color:var(--tx)}
 .hero p{margin:8px 0 0;font-size:14.5px;font-weight:600;color:var(--muted)}
 
 /* tiles */
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:26px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
 .tile{display:flex;flex-direction:column;gap:12px;padding:14px 14px 13px;border-radius:20px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--ok)}
 .tile .top{display:flex;align-items:center;justify-content:space-between}
 .tile .ic{width:22px;height:22px}
@@ -87,14 +88,14 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
 .tile.none{color:var(--muted)}.tile.none i{opacity:.4}
 
 /* action */
-.actwrap{position:fixed;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:440px;bottom:calc(100px + env(safe-area-inset-bottom,0px));z-index:5}
+.actwrap{margin:16px 0 14px}
 .act{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;width:100%;height:62px;border-radius:22px;border:0;background:var(--accent);color:var(--accent-ink);font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px var(--glow)}
 .act .ic{width:24px;height:24px;stroke-width:2.2}
 .act .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--fillc)}
 .act .in{position:relative;display:flex;align-items:center;gap:12px;color:var(--accent-ink)}
 .act:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 .act.locked:disabled{opacity:1;cursor:wait}
-.hint{text-align:center;margin:10px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)}
+.hint{text-align:center;margin:8px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)}
 
 /* tabs */
 .tabs{position:fixed;left:0;right:0;bottom:0;height:calc(84px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;background:var(--card);border-top:1px solid var(--line);padding:10px max(24px,calc((100vw - 480px)/2 + 24px)) env(safe-area-inset-bottom,0px)}
@@ -102,6 +103,9 @@ button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{o
 .tabs a[aria-current="page"]{color:var(--accent);background:var(--accent-t)}
 .tabs .ic{width:21px;height:21px}
 .view{display:none}.view.on{display:block}
+#v-home.on{display:flex;flex-direction:column;min-height:calc(100dvh - 18px - env(safe-area-inset-top,0px) - var(--tabs))}
+#v-settings.on{padding-bottom:calc(var(--tabs) + 24px)}
+@media (max-height:700px){.hero p{display:none}.tile{padding:10px 12px;gap:8px}.act{height:56px}.actwrap{margin:12px 0 10px}.hero h2{font-size:28px}}
 
 /* settings */
 h1.pg{margin:0;font-weight:800;font-size:30px;letter-spacing:-.03em}
@@ -137,7 +141,7 @@ input.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
 .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
 details{color:var(--muted);margin-top:22px;font-size:14px}summary{cursor:pointer;padding:6px 0}
 details button{font-size:.9rem;min-height:40px;margin:8px 8px 0 0;padding:0 14px;border-radius:10px;border:1px solid var(--fline);background:var(--card)}
-#toast{position:fixed;left:50%;bottom:calc(190px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;max-width:90vw;font-weight:700;font-size:14px;z-index:20}
+#toast{position:fixed;left:50%;bottom:calc(var(--tabs) + 100px);transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;max-width:90vw;font-weight:700;font-size:14px;z-index:20}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -206,9 +210,6 @@ details button{font-size:.9rem;min-height:40px;margin:8px 8px 0 0;padding:0 14px
       <p class="hint" id="hint" aria-live="polite"></p>
     </div>
 
-    <details id="sim"><summary>Preview simulator (not part of the real app)</summary>
-      <button id="dAlarm">Alarm on/off</button><button id="dPower">Mains lost/back</button><button id="dDev">Gateway offline/online</button><button id="dWifi">Change Wi-Fi signal</button>
-    </details>
   </div>
 
   <!-- Page 2 -->
@@ -243,6 +244,10 @@ details button{font-size:.9rem;min-height:40px;margin:8px 8px 0 0;padding:0 14px
       <div class="bar" id="fwBar" hidden><i id="fwFill"></i></div>
       <p class="sub" id="fwMsg" style="margin:10px 0 0" aria-live="polite"></p>
     </section>
+
+    <details id="sim"><summary>Preview simulator (not part of the real app)</summary>
+      <button id="dAlarm">Alarm on/off</button><button id="dPower">Mains lost/back</button><button id="dDev">Gateway offline/online</button><button id="dWifi">Change Wi-Fi signal</button>
+    </details>
   </div>
 </main>
 
