@@ -4,99 +4,144 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Zeus Gateway</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#eef2f5;--card:#fff;--ink:#14212b;--muted:#5d6d7a;--line:#d5dde3;
-  --ok:#0b7f62;--okbg:#d9f2ea;--bad:#c62828;--badbg:#fde4e2;--warn:#8a5a00;--warnbg:#fff0cc;
-  --accent:#1f5fbf;--accent-ink:#fff;--attn:#ecc27c;--attn-ink:#4a2d00;
-  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  --bg:#F4F5F7;--card:#FFFFFF;--ink:#0E1620;--muted:#5C6B7A;--line:#E6E9ED;--field:#F4F5F7;--fline:#DDE2E8;
+  --ok:#0F8A6B;--okt:rgba(15,138,107,.10);--okring:rgba(15,138,107,.28);--okx:#0E1620;
+  --attn:#C26A12;--attnt:rgba(194,106,18,.12);--attnring:rgba(194,106,18,.38);--attnx:#8A4B0C;
+  --bad:#D6362F;--badt:rgba(214,54,47,.10);--badring:rgba(214,54,47,.36);--badx:#B3261E;
+  --warn:#9A6200;--warnt:rgba(154,98,0,.12);--warnring:rgba(154,98,0,.34);--warnx:#7A5200;
+  --accent:#2457F5;--accent-ink:#FFFFFF;--accent-t:rgba(36,87,245,.10);--glow:rgba(36,87,245,.28);--fillc:rgba(255,255,255,.30);
+  --shadow:0 1px 2px rgba(14,22,32,.05);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f1820;--card:#18242e;--ink:#e8eef3;--muted:#93a3b0;--line:#2a3a47;
-  --ok:#4fd1a8;--okbg:#12362d;--bad:#ff8a80;--badbg:#3d1d1b;--warn:#f5c15a;--warnbg:#3a2d0d;
-  --accent:#6aa5ff;--accent-ink:#0b1620;--attn:#a85a1f;--attn-ink:#fff3dc}}
+  --bg:#0A0F15;--card:#131A22;--ink:#EAF0F5;--muted:#8A98A6;--line:#1F2A36;--field:#0E151C;--fline:#243140;
+  --ok:#3DDBA6;--okt:rgba(61,219,166,.14);--okring:rgba(61,219,166,.32);--okx:#EAF0F5;
+  --attn:#F29A3D;--attnt:rgba(242,154,61,.15);--attnring:rgba(242,154,61,.50);--attnx:#F7B766;
+  --bad:#FF6B62;--badt:rgba(255,107,98,.16);--badring:rgba(255,107,98,.50);--badx:#FF8A82;
+  --warn:#F5C15A;--warnt:rgba(245,193,90,.14);--warnring:rgba(245,193,90,.40);--warnx:#F5C15A;
+  --accent:#5B8CFF;--accent-ink:#06101F;--accent-t:rgba(91,140,255,.16);--glow:rgba(91,140,255,.25);--fillc:rgba(0,0,0,.20);
+  --shadow:none}}
 :root[data-theme="dark"]{
-  --bg:#0f1820;--card:#18242e;--ink:#e8eef3;--muted:#93a3b0;--line:#2a3a47;
-  --ok:#4fd1a8;--okbg:#12362d;--bad:#ff8a80;--badbg:#3d1d1b;--warn:#f5c15a;--warnbg:#3a2d0d;
-  --accent:#6aa5ff;--accent-ink:#0b1620;--attn:#a85a1f;--attn-ink:#fff3dc}
+  --bg:#0A0F15;--card:#131A22;--ink:#EAF0F5;--muted:#8A98A6;--line:#1F2A36;--field:#0E151C;--fline:#243140;
+  --ok:#3DDBA6;--okt:rgba(61,219,166,.14);--okring:rgba(61,219,166,.32);--okx:#EAF0F5;
+  --attn:#F29A3D;--attnt:rgba(242,154,61,.15);--attnring:rgba(242,154,61,.50);--attnx:#F7B766;
+  --bad:#FF6B62;--badt:rgba(255,107,98,.16);--badring:rgba(255,107,98,.50);--badx:#FF8A82;
+  --warn:#F5C15A;--warnt:rgba(245,193,90,.14);--warnring:rgba(245,193,90,.40);--warnx:#F5C15A;
+  --accent:#5B8CFF;--accent-ink:#06101F;--accent-t:rgba(91,140,255,.16);--glow:rgba(91,140,255,.25);--fillc:rgba(0,0,0,.20);
+  --shadow:none}
 *,*::before,*::after{box-sizing:inherit}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:560px;margin:0 auto;padding:16px 16px 190px}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:480px;margin:0 auto;padding:22px 20px 250px}
 .ic{width:1.3em;height:1.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 16px}
-h1{font-size:1.15rem;margin:0}h2{font-size:1rem;margin:0 0 10px}
-.sub{color:var(--muted);font-size:.88rem}
-
-/* heartbeat */
-.hb{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;color:var(--muted)}
-.hb .heart{width:1.1rem;height:1.1rem}
-.hb.ok{color:var(--ok)}.hb.ok .heart{fill:currentColor}
+.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-weight:500}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.01em}
+.brand svg{width:36px;height:36px}
+.hdr-r{display:flex;align-items:center;gap:10px;position:relative}
+.hb{display:flex;align-items:center;gap:7px;height:36px;padding:0 13px;border-radius:99px;background:var(--line);color:var(--muted);font-weight:700;font-size:13px}
+.hb .heart{width:15px;height:15px}
+.hb.ok{background:var(--okt)}.hb.ok .heart{fill:currentColor}.hb.ok #hbTxt{color:var(--ok)}
 .heart.beat{animation:beat .6s ease-out}
 @keyframes beat{0%{transform:scale(1)}18%{transform:scale(1.4)}36%{transform:scale(1.05)}54%{transform:scale(1.25)}100%{transform:scale(1)}}
-
-/* status tiles */
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:92px;gap:1px;padding:10px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10)}
-.tile .ic{width:1.5rem;height:1.5rem}
-.tile b{font-size:.76rem;font-weight:600;opacity:.8}.tile span{font-size:.92rem;font-weight:700}
-.tile.ok{background:var(--okbg);color:var(--ok);border-color:transparent}
-.tile.bad{background:var(--badbg);color:var(--bad);border-color:transparent}
-.tile.warn{background:var(--warnbg);color:var(--warn);border-color:transparent}
-.tile.none{color:var(--muted)}
-
-/* the big button */
-.act{position:relative;overflow:hidden;width:100%;min-height:46px;border-radius:16px;border:0;background:#1a6cf0;color:#fff;font:inherit;font-size:1.2rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.act .ic{width:1.6rem;height:1.6rem}
-.act .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.3)}
-.act .in{position:relative;display:flex;align-items:center;gap:10px}
-.act:disabled{opacity:.5;cursor:not-allowed}
-.act.locked:disabled{opacity:1;cursor:wait}
-.hint{text-align:center;margin:10px 0 0;color:var(--muted)}
-.note{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:.9rem;margin:0 0 14px}
-
 button,input,a{font:inherit}
-button{cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible,.seg input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
-button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button{cursor:pointer;color:var(--ink)}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.iconbtn{width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--fline);background:var(--card);display:flex;align-items:center;justify-content:center}
+.iconbtn .ic{width:19px;height:19px}
+.menu{position:absolute;right:0;top:52px;z-index:10;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.menu button{width:100%;display:flex;align-items:center;gap:10px;justify-content:flex-start;border:0;background:none;min-height:44px;padding:0 12px;border-radius:10px}
+.menu button[aria-checked="true"]{color:var(--accent);font-weight:800}
 
-section.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10)}
-label{display:block;font-weight:600;margin:14px 0 4px}
-.hintl{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
-input[type=text],input[type=password],input[type=number]{width:100%;padding:10px 12px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
-.two{display:grid;grid-template-columns:1fr 110px;gap:10px}
-.pw{display:flex;gap:8px}
-.check{display:flex;gap:10px;align-items:flex-start;font-weight:600;margin-top:18px}
-.check input{width:22px;height:22px;margin:2px 0 0}
-.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
-details{color:var(--muted);margin-top:18px}summary{cursor:pointer;padding:6px 0}
-details button{font-size:.9rem;min-height:40px}
-
-.banner{display:flex;gap:18px;align-items:center;border-radius:18px;padding:46px 22px;margin-bottom:16px;background:var(--okbg);color:var(--ok);box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10);transition:background .25s,color .25s}
-.banner.alarm{background:var(--badbg);color:var(--bad)}.banner.warn{background:var(--warnbg);color:var(--warn)}.banner.solid{background:var(--attn);color:var(--attn-ink)}
-.banner .ic{width:3.6rem;height:3.6rem;stroke-width:1.5}
-.banner strong{display:block;font-size:2.1rem;line-height:1.1;letter-spacing:-.02em}.banner span{display:block;margin-top:4px;font-size:1rem}
-.hdr-r{display:flex;align-items:center;gap:10px;position:relative}
-.iconbtn{width:40px;height:40px;min-height:40px;padding:0;border-radius:50%}
-.menu{position:absolute;right:0;top:48px;z-index:10;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.menu button{width:100%;justify-content:flex-start;border:0;background:none;min-height:40px}
-.menu button[aria-checked="true"]{color:var(--accent);font-weight:700}
-.wifi{display:flex;align-items:center;justify-content:center;gap:8px;margin:-6px 0 10px;font-size:.8rem;color:var(--muted)}
-.wifi .sig{width:15px;height:13px;flex:none}
-.wifi .sig rect{fill:currentColor;opacity:.25}.wifi .sig rect.on{opacity:.9}
+.wifi{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)}
+.wifi .sig{width:16px;height:14px;flex:none}
+.wifi .sig rect{fill:currentColor;opacity:.28}.wifi .sig rect.on{opacity:.95}
 .wifi .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%}
-.wifi .rs{white-space:nowrap;font-variant-numeric:tabular-nums}
-.actwrap{position:fixed;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:528px;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:5}
-.actwrap .hint{margin:8px 0 0;font-size:.85rem}
-.tile.solid{background:var(--attn);color:var(--attn-ink);border-color:transparent}
-.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}
-.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
-.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
-.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:600}
-.tabs a[aria-current="page"]{color:var(--accent)}
+
+/* hero */
+.hero{--c:var(--ok);--ct:var(--ok);--tint:var(--okt);--rg:var(--okring);--tx:var(--okx);display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:20px}
+.hero.attn{--c:var(--attn);--tint:var(--attnt);--rg:var(--attnring);--tx:var(--attnx)}
+.hero.bad{--c:var(--bad);--tint:var(--badt);--rg:var(--badring);--tx:var(--badx)}
+.hero.warn{--c:var(--warn);--tint:var(--warnt);--rg:var(--warnring);--tx:var(--warnx)}
+.ring{width:min(236px,64vw);aspect-ratio:1;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--c) 30%,transparent);display:flex;align-items:center;justify-content:center}
+.disc{width:80%;aspect-ratio:1;border-radius:50%;background:var(--tint);border:1.5px solid var(--rg);display:flex;align-items:center;justify-content:center;color:var(--c)}
+.hero.bad .ring{box-shadow:0 0 0 14px color-mix(in srgb,var(--c) 8%,transparent)}
+.hero.bad .disc,.hero.attn .disc{box-shadow:0 0 60px color-mix(in srgb,var(--c) 24%,transparent)}
+.disc .ic{width:44%;height:44%;stroke-width:1.5}
+.hero h2{margin:22px 0 0;font-weight:800;font-size:clamp(28px,9vw,36px);letter-spacing:-.03em;line-height:1.05;color:var(--tx)}
+.hero p{margin:8px 0 0;font-size:14.5px;font-weight:600;color:var(--muted)}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:26px}
+.tile{display:flex;flex-direction:column;gap:12px;padding:14px 14px 13px;border-radius:20px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--ok)}
+.tile .top{display:flex;align-items:center;justify-content:space-between}
+.tile .ic{width:22px;height:22px}
+.tile i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.tile b{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tile span{display:block;margin-top:2px;font-size:16px;font-weight:800;color:var(--ink)}
+.tile.attn{background:var(--attnt);border-color:var(--attnring);color:var(--attn)}.tile.attn span{color:var(--attnx)}
+.tile.bad{background:var(--badt);border-color:var(--badring);color:var(--bad)}.tile.bad span{color:var(--badx)}
+.tile.none{color:var(--muted)}.tile.none i{opacity:.4}
+
+/* action */
+.actwrap{position:fixed;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:440px;bottom:calc(100px + env(safe-area-inset-bottom,0px));z-index:5}
+.act{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;width:100%;height:62px;border-radius:22px;border:0;background:var(--accent);color:var(--accent-ink);font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px var(--glow)}
+.act .ic{width:24px;height:24px;stroke-width:2.2}
+.act .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--fillc)}
+.act .in{position:relative;display:flex;align-items:center;gap:12px;color:var(--accent-ink)}
+.act:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.act.locked:disabled{opacity:1;cursor:wait}
+.hint{text-align:center;margin:10px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;height:calc(84px + env(safe-area-inset-bottom,0px));display:flex;gap:12px;background:var(--card);border-top:1px solid var(--line);padding:10px max(24px,calc((100vw - 480px)/2 + 24px)) env(safe-area-inset-bottom,0px)}
+.tabs a{flex:1;height:52px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:16px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:700}
+.tabs a[aria-current="page"]{color:var(--accent);background:var(--accent-t)}
+.tabs .ic{width:21px;height:21px}
 .view{display:none}.view.on{display:block}
-#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;max-width:90vw}
+
+/* settings */
+h1.pg{margin:0;font-weight:800;font-size:30px;letter-spacing:-.03em}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:16px;box-shadow:var(--shadow)}
+section.card h3{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-weight:800;font-size:16px}
+section.card h3 .ic{color:var(--accent);width:20px;height:20px}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:14px 0 6px}
+.two{display:grid;grid-template-columns:1fr 92px;gap:10px}
+.two label{margin-top:0}
+.hintl{display:block;font-weight:600;color:var(--muted);font-size:12px;margin-top:2px}
+input[type=text],input[type=password],input[type=number]{width:100%;height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--fline);background:var(--field);color:var(--ink);font-size:13px}
+input.mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
+.pw{display:flex;gap:8px}
+.pw button{width:48px;height:48px;border-radius:14px;border:1px solid var(--fline);background:var(--card);padding:0;display:flex;align-items:center;justify-content:center}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.row b{display:block;font-size:14px}
+.sw{position:relative;width:50px;height:30px;flex:none}
+.sw input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.sw i{position:absolute;inset:0;border-radius:99px;background:var(--fline);transition:background .2s;pointer-events:none}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.sw input:checked+i{background:var(--accent)}.sw input:checked+i::after{transform:translateX(20px)}
+.sw input:focus-visible+i{outline:3px solid var(--accent);outline-offset:2px}
+.btn{height:52px;width:100%;margin-top:16px;border:0;border-radius:16px;background:var(--accent);color:var(--accent-ink);font-size:15.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn .ic{width:20px;height:20px;stroke-width:2.2}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--fline);width:auto;margin:0;height:48px;padding:0 18px;border-radius:15px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.fw{display:flex;align-items:center;gap:14px}
+.fw .v{flex:1;min-width:0}
+.fw .v small{display:block;font-size:12px;font-weight:700;color:var(--muted)}
+.fw .v .mono{display:block;margin-top:3px;font-size:20px}
+.sub{color:var(--muted);font-size:12.5px;font-weight:600}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:14px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+details{color:var(--muted);margin-top:22px;font-size:14px}summary{cursor:pointer;padding:6px 0}
+details button{font-size:.9rem;min-height:40px;margin:8px 8px 0 0;padding:0 14px;border-radius:10px;border:1px solid var(--fline);background:var(--card)}
+#toast{position:fixed;left:50%;bottom:calc(190px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;max-width:90vw;font-weight:700;font-size:14px;z-index:20}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -122,67 +167,79 @@ details button{font-size:.9rem;min-height:40px}
 </svg>
 
 <main>
-  <header>
-    <h1>Zeus Gateway</h1>
-    <div class="hdr-r">
-      <span class="hb" id="hb"><svg class="ic heart" id="heart"><use href="#i-heart"/></svg><span id="hbTxt"></span></span>
-      <button class="iconbtn" id="themeBtn" aria-label="Appearance" aria-haspopup="menu" aria-expanded="false"></button>
-      <div class="menu" id="menu" role="menu" hidden>
-        <button role="menuitemradio" data-t="light"><svg class="ic"><use href="#i-sun"/></svg>Light</button>
-        <button role="menuitemradio" data-t="dark"><svg class="ic"><use href="#i-moon"/></svg>Dark</button>
-        <button role="menuitemradio" data-t="system"><svg class="ic"><use href="#i-monitor"/></svg>System</button>
-      </div>
-    </div>
-  </header>
-
   <!-- Page 1 -->
   <div class="view on" id="v-home">
+    <header>
+      <div class="brand">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" fill="var(--accent)"/><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" transform="translate(7.3 7.4) scale(.4)" fill="var(--accent-ink)"/></svg>
+        Zeus
+      </div>
+      <div class="hdr-r">
+        <span class="hb" id="hb"><svg class="ic heart" id="heart"><use href="#i-heart"/></svg><span id="hbTxt"></span></span>
+        <button class="iconbtn" id="themeBtn" aria-label="Appearance" aria-haspopup="menu" aria-expanded="false"></button>
+        <div class="menu" id="menu" role="menu" hidden>
+          <button role="menuitemradio" data-t="light"><svg class="ic"><use href="#i-sun"/></svg>Light</button>
+          <button role="menuitemradio" data-t="dark"><svg class="ic"><use href="#i-moon"/></svg>Dark</button>
+          <button role="menuitemradio" data-t="system"><svg class="ic"><use href="#i-monitor"/></svg>System</button>
+        </div>
+      </div>
+    </header>
+
     <div class="wifi" id="wifi" aria-live="polite">
       <svg class="sig" id="sig" viewBox="0 0 30 26" aria-hidden="true"><rect x="0" y="17" width="6" height="9" rx="1.5"/><rect x="8" y="11" width="6" height="15" rx="1.5"/><rect x="16" y="5" width="6" height="21" rx="1.5"/><rect x="24" y="0" width="6" height="26" rx="1.5"/></svg>
-      <span class="nm" id="wfName">Wi-Fi: waiting…</span><span class="rs" id="wfInfo"></span>
+      <span class="nm" id="wfName">Wi-Fi: waiting…</span><span class="mono" id="wfInfo"></span>
     </div>
-    <div class="banner" id="banner" role="status" aria-live="polite"></div>
+
+    <div class="hero" id="hero" role="status" aria-live="polite">
+      <div class="ring"><div class="disc" id="heroIc"></div></div>
+      <h2 id="heroTitle"></h2>
+      <p id="heroSub"></p>
+    </div>
+
     <div class="tiles" id="tiles"></div>
-
-
 
     <div class="actwrap">
       <button class="act" id="act" aria-describedby="hint">
         <span class="fill" id="fill"></span>
         <span class="in"><span id="actIc"></span><span id="actLbl">Arm</span></span>
-    </button>
+      </button>
       <p class="hint" id="hint" aria-live="polite"></p>
     </div>
 
     <details id="sim"><summary>Preview simulator (not part of the real app)</summary>
-      <div class="actions">
-        <button id="dAlarm">Alarm on/off</button><button id="dPower">Mains lost/back</button><button id="dDev">Gateway offline/online</button><button id="dWifi">Change Wi-Fi signal</button>
-      </div>
+      <button id="dAlarm">Alarm on/off</button><button id="dPower">Mains lost/back</button><button id="dDev">Gateway offline/online</button><button id="dWifi">Change Wi-Fi signal</button>
     </details>
   </div>
 
   <!-- Page 2 -->
   <div class="view" id="v-settings">
+    <header><h1 class="pg">Settings</h1></header>
+
     <section class="card" aria-labelledby="hBroker">
-      <h2 id="hBroker">MQTT credentials</h2>
+      <h3 id="hBroker"><svg class="ic"><use href="#i-cloud"/></svg>MQTT credentials</h3>
       <div class="two">
-        <div><label for="host" style="margin-top:0">Broker address</label><input type="text" id="host" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="abc123.s1.eu.hivemq.cloud"></div>
-        <div><label for="port" style="margin-top:0">Port</label><input type="number" id="port" inputmode="numeric"></div>
+        <div><label for="host">Broker address</label><input type="text" class="mono" id="host" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="abc123.s1.eu.hivemq.cloud"></div>
+        <div><label for="port">Port</label><input type="number" class="mono" id="port" inputmode="numeric"></div>
       </div>
       <span class="hintl">Browsers use secure WebSockets: HiveMQ Cloud port 8884.</span>
       <label for="user">Username</label>
-      <input type="text" id="user" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <input type="text" class="mono" id="user" autocomplete="off" autocapitalize="none" spellcheck="false">
       <label for="pass">Password</label>
       <div class="pw"><input type="password" id="pass" autocomplete="new-password"><button type="button" id="showPw" aria-label="Show password"><svg class="ic"><use href="#i-eye"/></svg></button></div>
-      <label class="check"><input type="checkbox" id="demo"><span>Use simulated data<span class="hintl">Preview only, no broker needed.</span></span></label>
-      <div class="actions"><button class="primary" id="save"><svg class="ic"><use href="#i-cloud"/></svg>Save and connect</button></div>
+      <div class="row">
+        <div><b>Use simulated data</b><span class="hintl">Preview only, no broker needed</span></div>
+        <label class="sw" style="margin:0"><input type="checkbox" id="demo"><i></i><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Use simulated data</span></label>
+      </div>
+      <button class="btn" id="save"><svg class="ic"><use href="#i-cloud"/></svg>Save and connect</button>
       <p class="sub" id="formMsg" style="margin:10px 0 0" aria-live="polite"></p>
     </section>
 
     <section class="card" aria-labelledby="hFw">
-      <h2 id="hFw">Gateway firmware</h2>
-      <p class="sub" style="margin:0 0 12px">Installed version: <b id="fwVer">unknown</b></p>
-      <button class="primary" id="fwBtn"><svg class="ic"><use href="#i-download"/></svg>Update firmware</button>
+      <h3 id="hFw" style="margin-bottom:12px"><svg class="ic"><use href="#i-download"/></svg>Gateway firmware</h3>
+      <div class="fw">
+        <div class="v"><small>Installed version</small><b class="mono" id="fwVer">unknown</b><span class="sub">Disarm the panel before updating</span></div>
+        <button class="btn ghost" id="fwBtn"><svg class="ic"><use href="#i-download"/></svg>Update</button>
+      </div>
       <div class="bar" id="fwBar" hidden><i id="fwFill"></i></div>
       <p class="sub" id="fwMsg" style="margin:10px 0 0" aria-live="polite"></p>
     </section>
@@ -195,10 +252,11 @@ details button{font-size:.9rem;min-height:40px}
 </nav>
 <div id="toast"></div>
 
+
 <script>
 var $ = function(i){ return document.getElementById(i); };
 var DEF = {host:"", port:8884, user:"", pass:"", demo:false, theme:"system"};
-var PREFIX = "zeus", LOCK_MS = 5000;
+var PREFIX = "zeus", LOCK_MS = 3000, HOLD_MS = 1000;   // hold 1 s to act, then 3 s lock (matches the gateway pulse)
 var TOPICS = ["system_status","arm","alarm","power","ping","availability","relay_state","reset_reason","version","update_status","wifi"];
 
 function loadCfg(){ var c = {}; try { c = JSON.parse(localStorage.getItem("zeusWeb2") || "{}"); } catch(e){} return Object.assign({}, DEF, c); }
@@ -229,7 +287,6 @@ function beat(){
   h.classList.remove("beat"); void h.getBoundingClientRect(); h.classList.add("beat");
 }
 var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
-function banner(cls, icon, t, s){ var b = $("banner"); b.className = "banner " + cls; b.innerHTML = ic(icon) + "<div><strong>" + t + "</strong><span>" + s + "</span></div>"; }
 
 // ---- messages from the gateway (same path for the broker and the simulator) ----
 function handle(topic, msg){
@@ -256,13 +313,14 @@ function publish(k, m){
   if(C.demo){
     if(k === "zone_remote" && m === "pulse" && sim.up){
       setTimeout(function(){ sim.relay = true; handle(pre("relay_state"), "on"); }, 300);
-      setTimeout(function(){ sim.arm = !sim.arm; handle(pre("arm"), sim.arm ? "ZEUS panel - ARM event" : "ZEUS panel - DISARM event"); }, 2500);
-      setTimeout(function(){ sim.relay = false; handle(pre("relay_state"), "off"); }, 5300);
+      setTimeout(function(){ sim.arm = !sim.arm; handle(pre("arm"), sim.arm ? "ZEUS panel - ARM event" : "ZEUS panel - DISARM event"); }, 1800);
+      setTimeout(function(){ sim.relay = false; handle(pre("relay_state"), "off"); }, 3300);
     }
     if(k === "update" && m === "install" && sim.up) simUpdate();
   } else if(client){ client.publish(pre(k), m, {qos:1}); }
 }
-$("act").onclick = function(){
+var holdT = null, holding = false;
+function fire(){
   if(Date.now() < lock.until || S.arm === null || !up()) return;
   var want = !S.arm, was = S.arm;   // Arm and Disarm send the same pulse
   lock.until = Date.now() + LOCK_MS; lock.action = want ? "arm" : "disarm";
@@ -271,7 +329,28 @@ $("act").onclick = function(){
   publish("zone_remote", "pulse");
   setTimeout(function(){ if(S.arm === was) toast("The panel did not change state"); }, LOCK_MS + 1500);
   render();
-};
+}
+function holdStart(){
+  if(holding || $("act").disabled || Date.now() < lock.until) return;
+  holding = true;
+  var f = $("fill"); f.style.transition = "none"; f.style.width = "0"; void f.offsetWidth;
+  f.style.transition = "width " + HOLD_MS + "ms linear"; f.style.width = "100%";
+  holdT = setTimeout(function(){ holdT = null; holding = false; fire(); }, HOLD_MS);
+  render();
+}
+function holdCancel(){
+  if(!holding) return;
+  clearTimeout(holdT); holdT = null; holding = false;
+  var f = $("fill"); f.style.transition = "width .15s"; f.style.width = "0";
+  render();
+}
+var actB = $("act");
+actB.addEventListener("pointerdown", function(e){ if(e.button === 0 || e.pointerType !== "mouse"){ e.preventDefault(); holdStart(); } });
+["pointerup", "pointercancel", "pointerleave"].forEach(function(n){ actB.addEventListener(n, holdCancel); });
+actB.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+actB.addEventListener("keydown", function(e){ if((e.key === " " || e.key === "Enter") && !e.repeat){ e.preventDefault(); holdStart(); } });
+actB.addEventListener("keyup", function(e){ if(e.key === " " || e.key === "Enter") holdCancel(); });
+actB.addEventListener("blur", holdCancel);
 
 // ---- connection ----
 function disconnect(){ timers.forEach(clearTimeout); timers.forEach(clearInterval); timers = []; if(client){ try{ client.end(true); }catch(e){} client = null; } }
@@ -283,7 +362,7 @@ function loadLib(cb){
 }
 function simStatus(){
   handle(pre("system_status"), sim.arm ? "arm" : "disarm"); handle(pre("system_status"), sim.alarm ? "alarm" : "restore");
-  handle(pre("system_status"), sim.power ? "power_on" : "power_off"); handle(pre("relay_state"), sim.relay ? "on" : "off"); handle(pre("version"), "1.4.0"); simWifi();
+  handle(pre("system_status"), sim.power ? "power_on" : "power_off"); handle(pre("relay_state"), sim.relay ? "on" : "off"); handle(pre("version"), "2.1.0"); simWifi();
 }
 function simWifi(){ handle(pre("wifi"), JSON.stringify({ssid:"Home-WiFi", rssi:sim.rssi})); }
 function connect(){
@@ -308,7 +387,11 @@ function connect(){
 }
 
 // ---- rendering ----
-function tile(icon, cls, label, val){ return '<div class="tile ' + cls + '">' + ic(icon) + '<b>' + label + '</b><span>' + val + '</span></div>'; }
+function tile(icon, cls, label, val){
+  cls = cls === "solid" ? "attn" : cls === "ok" ? "" : cls;
+  return '<div class="tile ' + cls + '"><div class="top">' + ic(icon) + '<i></i></div><div><b>' + label + '</b><span>' + val + '</span></div></div>';
+}
+function hero(cls, icon, t, sub){ $("hero").className = "hero " + cls; $("heroIc").innerHTML = ic(icon); $("heroTitle").textContent = t; $("heroSub").textContent = sub; }
 
 function render(){
   var on = S.conn === "on", alive = up(), hb = $("hb");
@@ -316,13 +399,13 @@ function render(){
   if(!(on && alive)) $("heart").style.color = "";   // grey when there is no heartbeat
   $("hbTxt").textContent = !on ? (S.conn === "connecting" ? "Connecting" : "Not connected") : alive ? "Alive" : "No heartbeat";
 
-  if(!on) banner("warn", "cloud", S.conn === "connecting" ? "Connecting…" : "Not connected", esc(S.err || (!C.host && !C.demo ? "Enter your broker details in Settings." : "Reaching the broker.")));
-  else if(!alive) banner("warn", "heart", "Gateway offline", S.lastSeen ? "Last heartbeat " + ago(Date.now() - S.lastSeen) + "." : "Waiting for the gateway to report in.");
-  else if(S.arm === null || S.alarm === null || S.power === null) banner("warn", "clock", "Waiting for status", "Asked the gateway for its current state.");
-  else if(S.alarm) banner("alarm", "bell", "Alarm triggered", "The panel reports an alarm. Check the site.");
-  else if(!S.power) banner("warn", "zapoff", "Mains power lost", "The panel is running on its backup battery.");
-  else if(S.arm) banner("solid", "shieldcheck", "Armed", "Panel armed, mains power on.");
-  else banner("", "shieldoff", "All clear", "Panel disarmed, mains power on.");
+  if(!on) hero("warn", "cloud", S.conn === "connecting" ? "Connecting…" : "Not connected", S.err || (!C.host && !C.demo ? "Enter your broker details in Settings." : "Reaching the broker."));
+  else if(!alive) hero("warn", "heart", "Gateway offline", S.lastSeen ? "Last heartbeat " + ago(Date.now() - S.lastSeen) + "." : "Waiting for the gateway to report in.");
+  else if(S.arm === null || S.alarm === null || S.power === null) hero("warn", "clock", "Waiting for status", "Asked the gateway for its current state.");
+  else if(S.alarm) hero("bad", "bell", "Alarm triggered", "The panel reports an alarm. Check the site.");
+  else if(!S.power) hero("warn", "zapoff", "Mains power lost", "The panel is running on its backup battery.");
+  else if(S.arm) hero("attn", "shieldcheck", "Armed", "Panel armed · mains power on");
+  else hero("", "shieldoff", "All clear", "Panel disarmed · mains power on");
 
   $("tiles").innerHTML =
     (S.power === null ? tile("zap", "none", "Power", "Waiting") : S.power ? tile("zap", "ok", "Power", "On") : tile("zapoff", "bad", "Power", "Lost")) +
@@ -331,13 +414,14 @@ function render(){
 
   var left = lock.until - Date.now(), locked = left > 0, b = $("act");
   b.disabled = locked || !on || !alive || S.arm === null;
+  if(b.disabled && holding) holdCancel();
   b.className = "act" + (locked ? " locked" : "");
-  if(!locked){ var f = $("fill"); f.style.transition = "none"; f.style.width = "0"; }
+  if(!locked && !holding){ var f = $("fill"); f.style.transition = "none"; f.style.width = "0"; }
   $("actIc").innerHTML = ic(locked ? "clock" : S.arm ? "unlock" : "lock");
-  $("actLbl").textContent = locked ? "Wait " + Math.ceil(left / 1000) + " s" : S.arm ? "Disarm" : "Arm";
-  $("hint").textContent = locked ? (lock.action === "arm" ? "Relay pulse sent. Waiting for the panel to arm." : "Relay pulse sent. Waiting for the panel to disarm.")
+  $("actLbl").textContent = locked ? "Wait " + Math.ceil(left / 1000) + " s" : holding ? "Keep holding…" : S.arm ? "Disarm" : "Arm";
+  $("hint").textContent = holding ? "Release to cancel." : locked ? (lock.action === "arm" ? "Relay pulse sent. Waiting for the panel to arm." : "Relay pulse sent. Waiting for the panel to disarm.")
     : !on || !alive || S.arm === null ? "Unavailable until the gateway reports in."
-    : S.arm ? "Panel is armed. Press to send a 5 s pulse and disarm." : "Panel is disarmed. Press to send a 5 s pulse and arm.";
+    : S.arm ? "Panel is armed. Hold for 1 second to disarm." : "Panel is disarmed. Hold for 1 second to arm.";
   $("sim").style.display = C.demo ? "" : "none";
   renderWifi();
   renderFw();
@@ -382,7 +466,7 @@ $("save").onclick = function(){
 // ---- firmware update (the gateway downloads it from your GitHub release) ----
 function simUpdate(){
   var steps = ["starting", "progress 20", "progress 45", "progress 70", "progress 100", "success, rebooting"], i = 0;
-  var iv = setInterval(function(){ handle(pre("update_status"), steps[i++]); if(i >= steps.length){ clearInterval(iv); handle(pre("version"), "1.3.1"); } }, 1200);
+  var iv = setInterval(function(){ handle(pre("update_status"), steps[i++]); if(i >= steps.length){ clearInterval(iv); handle(pre("version"), "2.1.0"); } }, 1200);
 }
 $("fwBtn").onclick = function(){
   if(!(S.conn === "on" && up())) return;

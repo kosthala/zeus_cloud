@@ -32,7 +32,7 @@ constexpr int PIN_BUTTON      = 15;   // hold to wipe WiFi settings
 #define TOPIC_WIFI            "zeus/wifi"            // retained {"ssid":"..","rssi":-62}, refreshed every WIFI_REPORT_MS
 #define WIFI_REPORT_MS        30000UL
 
-#define FW_VERSION            "2.0.0"
+#define FW_VERSION            "2.1.0"
 
 // Where the gateway downloads new firmware from (HTTPS). The release asset must be named firmware.bin.
 #define OTA_URL               "https://github.com/kosthala/zeus_cloud/releases/latest/download/firmware.bin"
@@ -47,7 +47,7 @@ constexpr int PIN_BUTTON      = 15;   // hold to wipe WiFi settings
 #define INPUT_POLL_MS            100      // sample inputs every 100 ms
 #define INPUT_DEBOUNCE_SAMPLES   3        // must be stable for 3 samples (~300 ms)
 #define PING_INTERVAL_MS         1000     // heartbeat every second (web app expects this)
-#define PULSE_MS                 5000     // relay pulse length for the "pulse" command
+#define PULSE_MS                 3000     // relay pulse length for the "pulse" command
 #define WIFI_RETRY_MS            30000UL
 #define WIFI_OFFLINE_RESTART_MS  (15UL * 60UL * 1000UL)
 #define PORTAL_TIMEOUT_S         120
