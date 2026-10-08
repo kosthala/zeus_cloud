@@ -20,7 +20,7 @@
   --accent:#6aa5ff;--accent-ink:#0b1620;--attn:#a85a1f;--attn-ink:#fff3dc}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:560px;margin:0 auto;padding:16px 16px 100px}
+main{max-width:560px;margin:0 auto;padding:16px 16px 190px}
 .ic{width:1.3em;height:1.3em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 16px}
 h1{font-size:1.15rem;margin:0}h2{font-size:1rem;margin:0 0 10px}
@@ -79,11 +79,13 @@ details button{font-size:.9rem;min-height:40px}
 .menu{position:absolute;right:0;top:48px;z-index:10;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .menu button{width:100%;justify-content:flex-start;border:0;background:none;min-height:40px}
 .menu button[aria-checked="true"]{color:var(--accent);font-weight:700}
-details.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:2px 16px;margin-top:14px;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12),0 6px 14px rgba(0,0,0,.10)}
-details.card summary{display:flex;align-items:center;gap:8px;font-weight:700;padding:12px 0}
-ul.log{list-style:none;margin:0;padding:0 0 8px;max-height:240px;overflow:auto}
-ul.log li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
-ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.wifi{display:flex;align-items:center;justify-content:center;gap:8px;margin:-6px 0 10px;font-size:.8rem;color:var(--muted)}
+.wifi .sig{width:15px;height:13px;flex:none}
+.wifi .sig rect{fill:currentColor;opacity:.25}.wifi .sig rect.on{opacity:.9}
+.wifi .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%}
+.wifi .rs{white-space:nowrap;font-variant-numeric:tabular-nums}
+.actwrap{position:fixed;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:528px;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:5}
+.actwrap .hint{margin:8px 0 0;font-size:.85rem}
 .tile.solid{background:var(--attn);color:var(--attn-ink);border-color:transparent}
 .bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}
 .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
@@ -135,20 +137,26 @@ ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
 
   <!-- Page 1 -->
   <div class="view on" id="v-home">
+    <div class="wifi" id="wifi" aria-live="polite">
+      <svg class="sig" id="sig" viewBox="0 0 30 26" aria-hidden="true"><rect x="0" y="17" width="6" height="9" rx="1.5"/><rect x="8" y="11" width="6" height="15" rx="1.5"/><rect x="16" y="5" width="6" height="21" rx="1.5"/><rect x="24" y="0" width="6" height="26" rx="1.5"/></svg>
+      <span class="nm" id="wfName">Wi-Fi: waiting…</span><span class="rs" id="wfInfo"></span>
+    </div>
     <div class="banner" id="banner" role="status" aria-live="polite"></div>
     <div class="tiles" id="tiles"></div>
 
-    <button class="act" id="act" aria-describedby="hint">
-      <span class="fill" id="fill"></span>
-      <span class="in"><span id="actIc"></span><span id="actLbl">Arm</span></span>
-    </button>
-    <p class="hint" id="hint" aria-live="polite"></p>
 
-    <details class="card" id="events"><summary><svg class="ic"><use href="#i-clock"/></svg>Recent events</summary><ul class="log" id="log"></ul></details>
+
+    <div class="actwrap">
+      <button class="act" id="act" aria-describedby="hint">
+        <span class="fill" id="fill"></span>
+        <span class="in"><span id="actIc"></span><span id="actLbl">Arm</span></span>
+    </button>
+      <p class="hint" id="hint" aria-live="polite"></p>
+    </div>
 
     <details id="sim"><summary>Preview simulator (not part of the real app)</summary>
       <div class="actions">
-        <button id="dAlarm">Alarm on/off</button><button id="dPower">Mains lost/back</button><button id="dDev">Gateway offline/online</button>
+        <button id="dAlarm">Alarm on/off</button><button id="dPower">Mains lost/back</button><button id="dDev">Gateway offline/online</button><button id="dWifi">Change Wi-Fi signal</button>
       </div>
     </details>
   </div>
@@ -191,16 +199,16 @@ ul.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
 var $ = function(i){ return document.getElementById(i); };
 var DEF = {host:"", port:8884, user:"", pass:"", demo:false, theme:"system"};
 var PREFIX = "zeus", LOCK_MS = 5000;
-var TOPICS = ["system_status","arm","alarm","power","ping","availability","relay_state","reset_reason","version","update_status"];
+var TOPICS = ["system_status","arm","alarm","power","ping","availability","relay_state","reset_reason","version","update_status","wifi"];
 
 function loadCfg(){ var c = {}; try { c = JSON.parse(localStorage.getItem("zeusWeb2") || "{}"); } catch(e){} return Object.assign({}, DEF, c); }
 function saveCfg(){ try { localStorage.setItem("zeusWeb2", JSON.stringify(C)); return true; } catch(e){ return false; } }
 var C = loadCfg();
 
-var S = {ver:"", upd:"", conn:"off", err:"", arm:null, alarm:null, power:null, relay:null, online:false, lastSeen:0};
+var S = {ver:"", upd:"", conn:"off", err:"", arm:null, alarm:null, power:null, relay:null, wifi:null, online:false, lastSeen:0};
 var lock = {until:0, action:""};
 var client = null, timers = [];
-var sim = {arm:false, alarm:false, power:true, relay:false, up:true};
+var sim = {arm:false, alarm:false, power:true, relay:false, up:true, rssi:-58};
 
 function pre(k){ return PREFIX + "/" + k; }
 function up(){ return S.online && (Date.now() - S.lastSeen) < 5000; }
@@ -221,12 +229,6 @@ function beat(){
   h.classList.remove("beat"); void h.getBoundingClientRect(); h.classList.add("beat");
 }
 var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
-var events = [];
-function addEvent(m){ events.unshift({t:new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}), m:m}); events = events.slice(0, 30); renderLog(); }
-function renderLog(){
-  var li = ""; events.forEach(function(e){ li += "<li><time>" + e.t + "</time><span>" + esc(e.m) + "</span></li>"; });
-  $("log").innerHTML = li || "<li><span class='sub'>No events yet. Panel changes appear here.</span></li>";
-}
 function banner(cls, icon, t, s){ var b = $("banner"); b.className = "banner " + cls; b.innerHTML = ic(icon) + "<div><strong>" + t + "</strong><span>" + s + "</span></div>"; }
 
 // ---- messages from the gateway (same path for the broker and the simulator) ----
@@ -236,15 +238,16 @@ function handle(topic, msg){
     if(msg === "arm") S.arm = true; else if(msg === "disarm") S.arm = false;
     else if(msg === "alarm") S.alarm = true; else if(msg === "restore") S.alarm = false;
     else if(msg === "power_on") S.power = true; else if(msg === "power_off") S.power = false;
-  } else if(k === "arm"){ S.arm = msg.indexOf("DISARM") < 0; addEvent(msg);
-  } else if(k === "alarm"){ S.alarm = msg.indexOf("RESTORE") < 0; addEvent(msg);
-  } else if(k === "power"){ S.power = msg.indexOf("POWER OFF") < 0; addEvent(msg);
-  } else if(k === "availability"){ S.online = (msg === "online"); if(S.online) S.lastSeen = Date.now(); else addEvent("Gateway went offline");
+  } else if(k === "arm"){ S.arm = msg.indexOf("DISARM") < 0;
+  } else if(k === "alarm"){ S.alarm = msg.indexOf("RESTORE") < 0;
+  } else if(k === "power"){ S.power = msg.indexOf("POWER OFF") < 0;
+  } else if(k === "availability"){ S.online = (msg === "online"); if(S.online) S.lastSeen = Date.now();
   } else if(k === "ping"){ S.online = true; S.lastSeen = Date.now(); beat();
   } else if(k === "relay_state"){ S.relay = (msg === "on");
   } else if(k === "version"){ S.ver = msg;
-  } else if(k === "update_status"){ S.upd = msg; if(msg.indexOf("progress") !== 0) addEvent("Firmware: " + msg);
-  } else if(k === "reset_reason"){ addEvent(msg); }
+  } else if(k === "update_status"){ S.upd = msg;
+  } else if(k === "wifi"){ try{ var w = JSON.parse(msg); S.wifi = {ssid:String(w.ssid || ""), rssi:Number(w.rssi)}; }catch(e){}
+  }
   render();
 }
 
@@ -265,7 +268,6 @@ $("act").onclick = function(){
   lock.until = Date.now() + LOCK_MS; lock.action = want ? "arm" : "disarm";
   var f = $("fill"); f.style.transition = "none"; f.style.width = "0"; void f.offsetWidth;
   f.style.transition = "width " + LOCK_MS + "ms linear"; f.style.width = "100%";
-  addEvent(want ? "Arm requested (5 s relay pulse)" : "Disarm requested (5 s relay pulse)");
   publish("zone_remote", "pulse");
   setTimeout(function(){ if(S.arm === was) toast("The panel did not change state"); }, LOCK_MS + 1500);
   render();
@@ -281,14 +283,16 @@ function loadLib(cb){
 }
 function simStatus(){
   handle(pre("system_status"), sim.arm ? "arm" : "disarm"); handle(pre("system_status"), sim.alarm ? "alarm" : "restore");
-  handle(pre("system_status"), sim.power ? "power_on" : "power_off"); handle(pre("relay_state"), sim.relay ? "on" : "off"); handle(pre("version"), "1.3.0");
+  handle(pre("system_status"), sim.power ? "power_on" : "power_off"); handle(pre("relay_state"), sim.relay ? "on" : "off"); handle(pre("version"), "1.4.0"); simWifi();
 }
+function simWifi(){ handle(pre("wifi"), JSON.stringify({ssid:"Home-WiFi", rssi:sim.rssi})); }
 function connect(){
-  disconnect(); S.upd = ""; S.arm = S.alarm = S.power = S.relay = null; S.online = false; S.lastSeen = 0; S.err = ""; lock.until = 0;
+  disconnect(); S.upd = ""; S.arm = S.alarm = S.power = S.relay = S.wifi = null; S.online = false; S.lastSeen = 0; S.err = ""; lock.until = 0;
   if(C.demo){
     S.conn = "connecting"; render();
     timers.push(setTimeout(function(){ S.conn = "on"; handle(pre("availability"), "online"); handle(pre("ping"), "on"); simStatus(); }, 700));
     timers.push(setInterval(function(){ if(sim.up) handle(pre("ping"), "on"); }, 1000));
+    timers.push(setInterval(function(){ if(sim.up) simWifi(); }, 30000));
     return;
   }
   if(!C.host){ S.conn = "off"; render(); return; }
@@ -335,7 +339,16 @@ function render(){
     : !on || !alive || S.arm === null ? "Unavailable until the gateway reports in."
     : S.arm ? "Panel is armed. Press to send a 5 s pulse and disarm." : "Panel is disarmed. Press to send a 5 s pulse and arm.";
   $("sim").style.display = C.demo ? "" : "none";
+  renderWifi();
   renderFw();
+}
+
+function renderWifi(){
+  var w = S.wifi, ok = w && isFinite(w.rssi) && up(), q = 0, lbl = "";
+  if(ok){ var r = w.rssi; q = r >= -55 ? 4 : r >= -65 ? 3 : r >= -75 ? 2 : r >= -85 ? 1 : 0; lbl = ["very weak", "weak", "fair", "good", "excellent"][q]; }
+  [].forEach.call($("sig").querySelectorAll("rect"), function(r, i){ r.setAttribute("class", ok && i < Math.max(q, 1) ? "on" : ""); });
+  $("wfName").textContent = !w ? "Wi-Fi: waiting…" : w.ssid || "(hidden network)";
+  $("wfInfo").textContent = ok ? "· " + lbl + " · " + w.rssi + " dBm" : (w ? "· gateway offline" : "");
 }
 
 // ---- pages and settings ----
@@ -387,10 +400,11 @@ function renderFw(){
 // ---- preview simulator ----
 $("dAlarm").onclick = function(){ sim.alarm = !sim.alarm; handle(pre("alarm"), sim.alarm ? "ZEUS panel - ALARM event" : "ZEUS panel - RESTORE ALARM event"); };
 $("dPower").onclick = function(){ sim.power = !sim.power; handle(pre("power"), sim.power ? "ZEUS panel - POWER ON event" : "ZEUS panel - POWER OFF event"); };
+$("dWifi").onclick = function(){ var L = [-48, -58, -70, -80, -90]; sim.rssi = L[(L.indexOf(sim.rssi) + 1) % L.length]; simWifi(); };
 $("dDev").onclick = function(){ sim.up = !sim.up; handle(pre("availability"), sim.up ? "online" : "offline"); };
 
 try{ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme); }catch(e){}
-applyTheme(); fillForm(); renderLog(); route(); render(); connect();
+applyTheme(); fillForm(); route(); render(); connect();
 setTimeout(applyTheme, 0); window.addEventListener("load", applyTheme);
 setInterval(render, 250);
 </script>
