@@ -29,8 +29,10 @@ constexpr int PIN_BUTTON      = 15;   // hold to wipe WiFi settings
 #define TOPIC_UPDATE          "zeus/update"          // publish "install" (NOT retained) to start an update
 #define TOPIC_UPDATE_STATUS   "zeus/update_status"   // starting / progress N / success, rebooting / failed: ...
 #define TOPIC_VERSION         "zeus/version"         // retained firmware version
+#define TOPIC_WIFI            "zeus/wifi"            // retained {"ssid":"..","rssi":-62}, refreshed every WIFI_REPORT_MS
+#define WIFI_REPORT_MS        30000UL
 
-#define FW_VERSION            "2.0.0"
+#define FW_VERSION            "2.1.0"
 
 // Where the gateway downloads new firmware from (HTTPS). The release asset must be named firmware.bin.
 #define OTA_URL               "https://github.com/kosthala/zeus_cloud/releases/latest/download/firmware.bin"

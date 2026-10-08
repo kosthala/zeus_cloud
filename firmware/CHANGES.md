@@ -52,3 +52,6 @@
 - v1.3.0 (cert fix): added ISRG Root YR and ISRG Root YE to the OTA trust list; GitHub download hosts now use Let's Encrypt Gen Y certificates.
 
 - v1.3.0 (memory fix): the update waits for running alerts and pauses alerts while downloading (two TLS sessions did not fit in RAM); trust list trimmed to 9 roots.
+
+## 2.1.0
+- Gateway publishes retained zeus/wifi {"ssid","rssi"} on connect and every 30 s (shown in the app).

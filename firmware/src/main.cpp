@@ -193,6 +193,18 @@ static void initInputs()
 // ---------------------------------------------------------------------------
 // Public helpers used by mqtt.cpp
 // ---------------------------------------------------------------------------
+static void publishWifi()
+{
+    if (WiFi.status() != WL_CONNECTED)
+        return;
+    String ssid = WiFi.SSID();
+    ssid.replace("\\", "\\\\");
+    ssid.replace("\"", "\\\"");
+    char buf[96];
+    snprintf(buf, sizeof(buf), "{\"ssid\":\"%s\",\"rssi\":%d}", ssid.c_str(), (int)WiFi.RSSI());
+    MQTT_Publish(TOPIC_WIFI, buf, true);
+}
+
 void sendStatus()
 {
     for (int i = 0; i < NUM_INPUTS; i++)
@@ -200,6 +212,7 @@ void sendStatus()
 
     MQTT_Publish(TOPIC_RELAY_STATE, relayOn ? "on" : "off", true);
     MQTT_Publish(TOPIC_VERSION, FW_VERSION, true);
+    publishWifi();
 }
 
 
@@ -444,6 +457,13 @@ static void heartbeat()
     flag = !flag;
 
     MQTT_Publish(TOPIC_PING, flag ? "on" : "off");
+
+    static uint32_t lastWifi = 0;
+    if (lastWifi == 0 || (millis() - lastWifi) >= WIFI_REPORT_MS)
+    {
+        lastWifi = millis();
+        publishWifi();
+    }
 }
 
 
