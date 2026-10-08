@@ -56,3 +56,6 @@
 ## 2.1.0
 - Gateway publishes retained zeus/wifi {"ssid","rssi"} on connect and every 30 s (shown in the app).
 - PULSE_MS 5000 -> 3000 (matches the app: hold 1 s, then 3 s lock).
+
+## Partition table
+- otadata moved to 0xe000 (nvs 0x9000, 0x5000) so USB uploads reset the OTA slot choice; spiffs (unused) removed. Needs one USB flash with the new table; run `esptool.py erase_region 0xd000 0x2000` first when coming from the old table.
