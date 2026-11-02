@@ -166,6 +166,8 @@ details button{font-size:.9rem;min-height:40px;margin:8px 8px 0 0;padding:0 14px
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
   <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-padlock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="12" rx="2.5"/><path d="M8.5 10.5V6a3.5 3.5 0 0 1 7 0v4.5"/><circle cx="12" cy="15.8" r="1.3"/><path d="M12 17v2.4"/></symbol>
+  <symbol id="i-padlockopen" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="12" rx="2.5"/><path d="M8.5 10.5V6a3.5 3.5 0 0 1 6.9-.9"/><circle cx="12" cy="15.8" r="1.3"/><path d="M12 17v2.4"/></symbol>
   <symbol id="i-shieldcheck" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3M7 10l5 5 5-5M5 21h14"/></symbol>
 </svg>
@@ -409,13 +411,13 @@ function render(){
   else if(S.arm === null || S.alarm === null || S.power === null) hero("warn", "clock", "Waiting for status", "Asked the gateway for its current state.");
   else if(S.alarm) hero("bad", "bell", "Alarm triggered", "The panel reports an alarm. Check the site.");
   else if(!S.power) hero("warn", "zapoff", "Mains power lost", "The panel is running on its backup battery.");
-  else if(S.arm) hero("attn", "shieldcheck", "Armed", "Panel armed · mains power on");
-  else hero("", "shieldoff", "All clear", "Panel disarmed · mains power on");
+  else if(S.arm) hero("attn", "padlock", "Armed", "Panel armed · mains power on");
+  else hero("", "padlockopen", "All clear", "Panel disarmed · mains power on");
 
   $("tiles").innerHTML =
     (S.power === null ? tile("zap", "none", "Power", "Waiting") : S.power ? tile("zap", "ok", "Power", "On") : tile("zapoff", "bad", "Power", "Lost")) +
     (S.alarm === null ? tile("bell", "none", "Alarm", "Waiting") : S.alarm ? tile("bell", "bad", "Alarm", "Triggered") : tile("bell", "ok", "Alarm", "Normal")) +
-    (S.arm === null ? tile("shield", "none", "Arm", "Waiting") : S.arm ? tile("shieldcheck", "solid", "Arm", "Armed") : tile("shieldoff", "ok", "Arm", "Disarmed"));
+    (S.arm === null ? tile("padlock", "none", "Arm", "Waiting") : S.arm ? tile("padlock", "solid", "Arm", "Armed") : tile("padlockopen", "ok", "Arm", "Disarmed"));
 
   var left = lock.until - Date.now(), locked = left > 0, b = $("act");
   b.disabled = locked || !on || !alive || S.arm === null;
